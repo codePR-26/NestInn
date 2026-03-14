@@ -1,7 +1,53 @@
+# ----------------------
+# .NET / Visual Studio
+# ----------------------
+
 .vs/
 bin/
 obj/
 *.user
 *.suo
-*.cache
+*.userosscache
+*.sln.docstates
+
+# Build results
+Debug/
+Release/
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Logs
 *.log
+
+# ----------------------
+# Node / Angular
+# ----------------------
+
+node_modules/
+dist/
+.angular/
+tmp/
+out-tsc/
+
+# npm logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+
+# ----------------------
+# OS files
+# ----------------------
+
+.DS_Store
+Thumbs.db
+
+# ----------------------
+# Sensitive files
+# ----------------------
+
+Passwords.txt
