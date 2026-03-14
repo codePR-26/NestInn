@@ -1,9 +1,0 @@
-.otp-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--teal-900), var(--teal-700)); padding: 20px; }
-.otp-card { background: white; border-radius: var(--radius-xl); padding: 48px 40px; width: 100%; max-width: 440px; text-align: center; box-shadow: var(--shadow-xl); }
-.otp-icon { font-size: 3rem; margin-bottom: 16px; }
-h2 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 8px; }
-p { color: var(--text-muted); margin-bottom: 32px; strong { color: var(--text-primary); } }
-.otp-input { text-align: center; font-size: 1.8rem; letter-spacing: 12px; font-weight: 700; }
-.resend-area { margin-top: 20px; min-height: 40px; display: flex; align-items: center; justify-content: center; }
-.countdown { color: var(--text-muted); font-size: 0.875rem; strong { color: var(--teal-700); } }
-.back-link { display: inline-block; margin-top: 24px; color: var(--text-muted); font-size: 0.875rem; &:hover { color: var(--teal-700); } }
