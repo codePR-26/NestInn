@@ -92,19 +92,16 @@ SQL Server Database
 
 # 📊 System Flowchart
 
-View the system flowchart:
+Click to open the interactive system flowchart.
 
-👉 **[Open Flowchart](docs/nestinn_flowchart.html)**
+👉 https://codepr-26.github.io/NestInn/docs/nestinn_flowchart.html
 
----
 
 # 🗄 Database ER Diagram
 
-View the ER Diagram:
+Click to open the database ER diagram.
 
-👉 **[Open ER Diagram](docs/NestInn_ER_Diagram.html)**
-
----
+👉 https://codepr-26.github.io/NestInn/docs/NestInn_ER_Diagram.html
 
 # 📂 Project Structure
 
