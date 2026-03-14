@@ -1,0 +1,45 @@
+<div class="page-hero"><div class="container"><h1>Owner Dashboard</h1><p>Manage your properties and bookings</p></div></div>
+<div class="container section">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🏠</div><div><strong>{{ properties().length }}</strong><span>Properties</span></div></div>
+    <div class="stat-card"><div class="stat-icon">📅</div><div><strong>{{ pendingBookings }}</strong><span>Pending Bookings</span></div></div>
+    <div class="stat-card"><div class="stat-icon">✅</div><div><strong>{{ confirmedBookings }}</strong><span>Confirmed</span></div></div>
+    <div class="stat-card"><div class="stat-icon">💰</div><div><strong>₹{{ totalRevenue | number:'1.0-0' }}</strong><span>Total Revenue</span></div></div>
+  </div>
+
+  <div class="dash-actions">
+    <a routerLink="/owner/add-property" class="btn btn-primary">+ Add New Property</a>
+    <a routerLink="/owner/properties" class="btn btn-outline">View All Properties</a>
+  </div>
+
+  <h2 class="section-title" style="margin-top:40px">Recent Bookings</h2>
+  @if(loading()) { <div class="loading-overlay"><div class="spinner"></div></div> }
+  @else if(bookings().length === 0) {
+    <div class="empty-state"><div class="empty-icon">📅</div><h3>No bookings yet</h3><p>When guests book your properties, they'll appear here.</p></div>
+  } @else {
+    <div class="table-wrap">
+      <table class="bookings-table">
+        <thead><tr><th>Guest</th><th>Property</th><th>Dates</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          @for(b of bookings().slice(0,10); track b.bookingId) {
+            <tr>
+              <td>User #{{ b.userId }}</td>
+              <td>{{ b.propertyTitle || '#' + b.propertyId }}</td>
+              <td><small>{{ b.checkInDate | date:'shortDate' }} → {{ b.checkOutDate | date:'shortDate' }}</small></td>
+              <td>₹{{ b.totalAmount | number:'1.0-0' }}</td>
+              <td><span class="badge" [ngClass]="statusClass(b.bookingStatus)">{{ b.bookingStatus }}</span></td>
+              <td>
+                @if(b.bookingStatus === 'Pending') {
+                  <button class="btn btn-sm btn-primary" (click)="confirm(b.bookingId)" style="margin-right:6px">✓ Confirm</button>
+                  <button class="btn btn-sm btn-danger" (click)="decline(b.bookingId)">✗ Decline</button>
+                } @else if(b.bookingStatus === 'Confirmed') {
+                  <a [routerLink]="['/chat', b.bookingId]" class="btn btn-sm btn-outline">💬 Chat</a>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

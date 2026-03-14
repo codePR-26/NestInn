@@ -1,0 +1,49 @@
+<nav class="navbar" [class.scrolled]="scrolled">
+  <div class="container nav-inner">
+    <a routerLink="/" class="logo">
+      <span class="logo-icon">🏠</span>
+      <span class="logo-text">Nest<strong>Inn</strong></span>
+    </a>
+
+    <div class="nav-links" [class.open]="menuOpen">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
+      <a routerLink="/properties" routerLinkActive="active">Properties</a>
+      @if(auth.isOwner()) {
+        <a routerLink="/owner/dashboard" routerLinkActive="active">My Dashboard</a>
+      }
+      @if(auth.isCeo()) {
+        <a routerLink="/ceo/dashboard" routerLinkActive="active">CEO Panel</a>
+      }
+    </div>
+
+    <div class="nav-actions">
+      @if(!auth.isLoggedIn()) {
+        <a routerLink="/auth/login" class="btn btn-ghost btn-sm">Login</a>
+        <a routerLink="/auth/register" class="btn btn-primary btn-sm">Sign Up</a>
+      } @else {
+        <a routerLink="/bookings" class="nav-icon-btn" title="My Bookings">📅</a>
+        <div class="profile-menu">
+          <button class="profile-btn" (click)="toggleProfile($event)">
+            <span class="avatar">{{ auth.currentUser()?.fullName?.charAt(0) | uppercase }}</span>
+            <span class="profile-name">{{ auth.currentUser()?.fullName?.split(' ')?.[0] ?? '' }}</span>
+            <span>▾</span>
+          </button>
+          @if(profileOpen) {
+            <div class="dropdown" >
+              <a routerLink="/profile" (click)="profileOpen=false">👤 My Profile</a>
+              @if(!auth.isCeo()) {
+                <a routerLink="/bookings" (click)="profileOpen=false">📅 My Bookings</a>
+              }
+              @if(auth.isOwner()) {
+                <a routerLink="/owner/properties" (click)="profileOpen=false">🏠 My Properties</a>
+              }
+              <hr/>
+              <button (click)="logout(); profileOpen=false" class="logout-btn">🚪 Logout</button>
+            </div>
+          }
+        </div>
+      }
+      <button class="hamburger" (click)="menuOpen=!menuOpen">☰</button>
+    </div>
+  </div>
+</nav>

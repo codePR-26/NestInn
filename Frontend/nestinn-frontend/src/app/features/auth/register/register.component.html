@@ -1,0 +1,67 @@
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-brand">
+      <div class="brand-logo">🏠 NestInn</div>
+      <h1>Start your hosting<br/><em>or travel journey</em></h1>
+      <p>Whether you're a traveller or a host, NestInn has everything you need.</p>
+      <div class="role-cards">
+        <div class="role-card" [class.active]="form.role==='Renter'" (click)="form.role='Renter'">
+          <span>🧳</span> <div><strong>I'm a Renter</strong><small>Find amazing stays</small></div>
+        </div>
+        <div class="role-card" [class.active]="form.role==='Owner'" (click)="form.role='Owner'">
+          <span>🏠</span> <div><strong>I'm a Host</strong><small>List & earn from properties</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-card">
+      <h2>Create account</h2>
+      <p class="auth-sub">Join NestInn today — it's free</p>
+
+      <div class="role-toggle">
+        <button [class.active]="form.role==='Renter'" (click)="form.role='Renter'" type="button">🧳 Renter</button>
+        <button [class.active]="form.role==='Owner'" (click)="form.role='Owner'" type="button">🏠 Host / Owner</button>
+      </div>
+
+      <form (ngSubmit)="submit()">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" [(ngModel)]="form.fullName" name="fullName" placeholder="Arjun Sharma">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" [(ngModel)]="form.email" name="email" placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" [(ngModel)]="form.phone" name="phone" placeholder="+91 98765 43210">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Password</label>
+            <input [type]="showPass?'text':'password'" [(ngModel)]="form.password" name="password" placeholder="Min 8 characters">
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input [type]="showPass?'text':'password'" [(ngModel)]="form.confirmPassword" name="confirmPassword" placeholder="Repeat password">
+          </div>
+        </div>
+        <div class="show-pass-toggle">
+          <label><input type="checkbox" [(ngModel)]="showPass" name="showPass"> Show passwords</label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full btn-lg" [disabled]="loading">
+          {{ loading ? 'Creating account...' : 'Create Account' }}
+        </button>
+      </form>
+
+      <div class="auth-divider"><span>or</span></div>
+      <div class="auth-links">
+        <span>Already have an account?</span>
+        <a routerLink="/auth/login">Sign in →</a>
+      </div>
+    </div>
+  </div>
+</div>

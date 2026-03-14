@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NestInn – Complete System Flowchart</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-dark: #0d4f4f;
+    --teal-mid: #1a7a7a;
+    --teal-light: #4ecdc4;
+    --teal-pale: #a8eeeb;
+    --gold: #f0a500;
+    --red: #e74c3c;
+    --green: #27ae60;
+    --purple: #8e44ad;
+    --blue: #2980b9;
+    --orange: #e67e22;
+    --bg: #f0f7f7;
+    --white: #ffffff;
+    --gray: #ecf0f1;
+    --text: #1a2e2e;
+    --muted: #7f8c8d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #0a1f1f;
+    color: var(--text);
+    padding: 40px 20px 80px;
+    min-width: 1200px;
+  }
+
+  /* PAGE HEADER */
+  .page-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  .page-header .logo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .page-header .logo span { color: var(--teal-light); }
+  .page-header h1 {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .legend-dot {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+  }
+
+  /* COLUMNS */
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 32px;
+    max-width: 1400px;
+    margin: 0 auto 60px;
+  }
+
+  .column-header {
+    text-align: center;
+    padding: 16px 20px;
+    border-radius: 14px 14px 0 0;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .col-renter .column-header { background: var(--teal-dark); }
+  .col-owner .column-header { background: #1a5276; }
+  .col-ceo .column-header { background: #4a235a; }
+
+  .column-body {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-top: none;
+    border-radius: 0 0 14px 14px;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* NODES */
+  .node {
+    border-radius: 10px;
+    padding: 11px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #fff;
+    position: relative;
+    text-align: center;
+    line-height: 1.4;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+  }
+
+  .node-start { background: var(--teal-dark); border: 2px solid var(--teal-light); border-radius: 50px; }
+  .node-action { background: var(--teal-mid); }
+  .node-decision { background: var(--gold); color: #1a2e2e; transform: none; border-radius: 6px; font-weight: 700; }
+  .node-success { background: var(--green); }
+  .node-error { background: var(--red); }
+  .node-system { background: #2c3e50; border: 1px solid #4ecdc4; }
+  .node-email { background: #1565c0; }
+  .node-payment { background: #6a1b9a; }
+  .node-ceo { background: #4a235a; }
+  .node-chat { background: #00695c; }
+  .node-end { background: #1a2e2e; border: 2px solid var(--teal-light); border-radius: 50px; }
+  .node-owner-action { background: #1a5276; }
+  .node-otp { background: #e67e22; }
+
+  /* ARROW */
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 4px 0;
+  }
+  .arrow-line {
+    width: 2px;
+    background: rgba(255,255,255,0.2);
+    flex: 1;
+    min-height: 18px;
+  }
+  .arrow-head {
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid rgba(255,255,255,0.3);
+  }
+  .arrow-label {
+    font-size: 0.65rem;
+    color: var(--teal-light);
+    font-weight: 600;
+    background: rgba(78,205,196,0.1);
+    padding: 1px 8px;
+    border-radius: 20px;
+    margin: 2px 0;
+    text-align: center;
+  }
+
+  /* BRANCH */
+  .branch {
+    display: flex;
+    gap: 10px;
+    margin: 4px 0;
+  }
+  .branch-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .branch-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+    color: #fff;
+  }
+  .yes { background: var(--green); }
+  .no { background: var(--red); }
+
+  /* SECTION TITLE */
+  .section-title {
+    color: var(--teal-light);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 12px 0 4px;
+    opacity: 0.7;
+  }
+
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 16px 0;
+  }
+
+  /* FULL WIDTH SECTION */
+  .full-section {
+    max-width: 1400px;
+    margin: 0 auto 40px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .full-section-title {
+    text-align: center;
+    color: var(--teal-light);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+  }
+  .flow-arrow-h {
+    color: rgba(255,255,255,0.3);
+    font-size: 1.2rem;
+    padding: 0 6px;
+  }
+  .flow-node {
+    background: var(--teal-mid);
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 110px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  }
+  .flow-node.payment { background: #6a1b9a; }
+  .flow-node.email { background: #1565c0; }
+  .flow-node.chat { background: #00695c; }
+  .flow-node.ceo { background: #4a235a; }
+  .flow-node.success { background: var(--green); }
+  .flow-node.error { background: var(--red); }
+  .flow-node.otp { background: #e67e22; }
+  .flow-node.system { background: #2c3e50; border: 1px solid #4ecdc4; }
+
+  /* DB SECTION */
+  .db-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 1400px;
+    margin: 0 auto 40px;
+  }
+  .db-table {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(78,205,196,0.2);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .db-table-header {
+    background: var(--teal-dark);
+    color: var(--teal-light);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .db-table-row {
+    padding: 6px 14px;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.6);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .db-table-row:last-child { border-bottom: none; }
+  .pk { color: #f0a500; font-size: 0.65rem; font-weight: 700; }
+  .fk { color: #4ecdc4; font-size: 0.65rem; font-weight: 700; }
+
+  /* API TABLE */
+  .api-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    max-width: 1400px;
+    margin: 0 auto 40px;
+  }
+  .api-group {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .api-group-header {
+    padding: 10px 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .api-row {
+    padding: 7px 16px;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.65);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .method {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 42px;
+    text-align: center;
+  }
+  .get { background: #1565c0; color: #fff; }
+  .post { background: #2e7d32; color: #fff; }
+  .put { background: #e65100; color: #fff; }
+  .del { background: #b71c1c; color: #fff; }
+
+  /* SPRINT PLAN */
+  .sprint-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .sprint-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .sprint-header {
+    padding: 14px 20px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sprint-header.s1 { background: var(--teal-dark); }
+  .sprint-header.s2 { background: #1a5276; }
+  .sprint-header.s3 { background: #4a235a; }
+  .sprint-item {
+    padding: 8px 20px;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.65);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .sprint-item::before {
+    content: '→';
+    color: var(--teal-light);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .section-head {
+    max-width: 1400px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-head h2 {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+  .section-head-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+  }
+  .section-badge {
+    background: var(--teal-dark);
+    color: var(--teal-light);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="logo">Nest<span>Inn</span></div>
+  <h1>Complete System Flowchart & Architecture</h1>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#0d4f4f;border:1px solid #4ecdc4"></div>Start / End</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1a7a7a"></div>Action / Step</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f0a500"></div>Decision Point</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div>Success</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>Error / Fail</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1565c0"></div>Email / OTP</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6a1b9a"></div>Payment</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#00695c"></div>Real-time Chat</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4a235a"></div>CEO / Admin</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION 1: USER JOURNEYS -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-head">
+  <div class="section-badge">01</div>
+  <h2>User Journey Flows</h2>
+  <div class="section-head-line"></div>
+</div>
+
+<div class="columns">
+
+  <!-- RENTER COLUMN -->
+  <div class="col-renter">
+    <div class="column-header">🏠 Renter Journey</div>
+    <div class="column-body">
+
+      <div class="section-title">Registration & Login</div>
+      <div class="node node-start">User Visits NestInn</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-action">Click Register / Sign Up</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-action">Fill Form: Name, Email, Phone, Password</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-system">Password Hashed (BCrypt) + Stored in DB</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-email">📧 OTP Sent to Email via Gmail SMTP</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-decision">OTP Verified?</div>
+      <div class="branch">
+        <div class="branch-item">
+          <span class="branch-label yes">YES</span>
+          <div class="node node-success" style="width:100%">Account Activated ✓</div>
+        </div>
+        <div class="branch-item">
+          <span class="branch-label no">NO</span>
+          <div class="node node-error" style="width:100%">Resend OTP / Expire</div>
+        </div>
+      </div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-system">JWT Token Set in HTTP-Only Cookie 🍪</div>
+
+      <div class="divider"></div>
+      <div class="section-title">Property Search</div>
+
+      <div class="node node-action">Land on Home Page</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-action">View Top Rated Properties by Category</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-action">Search: Location + Dates + Type + Features</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-action">Results in List / Card View</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-action">Click Property → View 4-5 Photos</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-action">View Description, Amenities, Rules, Transport</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-action">Check Availability Calendar 📅</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-action">Select Dates → View Price Breakdown</div>
+
+      <div class="divider"></div>
+      <div class="section-title">Booking & Payment</div>
+
+      <div class="node node-action">Click "Reserve Now"</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-decision">User Logged In?</div>
+      <div class="branch">
+        <div class="branch-item">
+          <span class="branch-label no">NO</span>
+          <div class="node node-error" style="width:100%">Redirect to Login</div>
+        </div>
+        <div class="branch-item">
+          <span class="branch-label yes">YES</span>
+          <div class="node node-action" style="width:100%">Booking Summary Page</div>
+        </div>
+      </div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-payment">💳 Dummy Payment Gateway (RazorPay later)</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-decision">Payment Success?</div>
+      <div class="branch">
+        <div class="branch-item">
+          <span class="branch-label yes">YES</span>
+          <div class="node node-success" style="width:100%">Booking Confirmed ✓</div>
+        </div>
+        <div class="branch-item">
+          <span class="branch-label no">FAIL</span>
+          <div class="node node-error" style="width:100%">Refund in 3-4 Days</div>
+        </div>
+      </div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-email">📧 Invoice PDF Auto-Sent to User Email</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-system">10% Platform Fee → CEO Earnings Pool</div>
+
+      <div class="divider"></div>
+      <div class="section-title">After Booking</div>
+
+      <div class="node node-chat">💬 Real-time Chat Unlocked with Owner</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-end">Booking Complete 🎉</div>
+
+    </div>
+  </div>
+
+  <!-- OWNER COLUMN -->
+  <div class="col-owner">
+    <div class="column-header">🏢 Property Owner Journey</div>
+    <div class="column-body">
+
+      <div class="section-title">Registration & Login</div>
+      <div class="node node-start">Owner Visits NestInn</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Click "List Your Property"</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Register: Name, Email, Phone, Business Info</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-system">Password Hashed (BCrypt) + Role = "Owner"</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-email">📧 OTP Sent to Email via Gmail SMTP</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-decision">OTP Verified?</div>
+      <div class="branch">
+        <div class="branch-item">
+          <span class="branch-label yes">YES</span>
+          <div class="node node-success" style="width:100%">Account Activated ✓</div>
+        </div>
+        <div class="branch-item">
+          <span class="branch-label no">NO</span>
+          <div class="node node-error" style="width:100%">Resend / Expire</div>
+        </div>
+      </div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-system">JWT Token Set in HTTP-Only Cookie 🍪</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Owner Dashboard Loaded</div>
+
+      <div class="divider"></div>
+      <div class="section-title">Property Management</div>
+
+      <div class="node node-owner-action">Click "Add New Property"</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Fill Property Details:<br/>Title, Type, Location, Description</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Upload 4-5 Photos → Server Folder</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Set: Price (non-negotiable), Check-in/out Time</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Add: Nearest Transport, Rules & Regulations</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Add: Amenities (Pool, Garden, Beach, etc.)</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-success">Property Listed ✓ Visible to Renters</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Owner Can: View / Edit / Delete Properties</div>
+
+      <div class="divider"></div>
+      <div class="section-title">Booking Notifications</div>
+
+      <div class="node node-email">📧 Email: User Booked Your Property!</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">View Booking in Dashboard</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-decision">Confirm Reservation?</div>
+      <div class="branch">
+        <div class="branch-item">
+          <span class="branch-label yes">YES</span>
+          <div class="node node-success" style="width:100%">Status → Confirmed</div>
+        </div>
+        <div class="branch-item">
+          <span class="branch-label no">NO</span>
+          <div class="node node-error" style="width:100%">Status → Declined</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Messaging</div>
+
+      <div class="node node-owner-action">View Inbox: Messages from Users</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-chat">💬 Real-time Chat (Post-Booking Only)</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-owner-action">Reply to Messages</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-end">Owner Operations Complete 🏢</div>
+
+    </div>
+  </div>
+
+  <!-- CEO COLUMN -->
+  <div class="col-ceo">
+    <div class="column-header">👑 CEO / Admin Journey</div>
+    <div class="column-body">
+
+      <div class="section-title">Login (No Registration)</div>
+      <div class="node node-start">CEO Visits NestInn Admin</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-ceo">Login with Hardcoded Credentials</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-system">JWT Token Set (Role = "CEO") 🍪</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-decision">Valid Credentials?</div>
+      <div class="branch">
+        <div class="branch-item">
+          <span class="branch-label yes">YES</span>
+          <div class="node node-ceo" style="width:100%">CEO Dashboard 👑</div>
+        </div>
+        <div class="branch-item">
+          <span class="branch-label no">NO</span>
+          <div class="node node-error" style="width:100%">Access Denied</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Dashboard Overview</div>
+
+      <div class="node node-ceo">📊 Charts: Platform Growth, Bookings Trend</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-ceo">View All: New Properties Added</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-ceo">View All: Bookings Made (read-only)</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-ceo">View All: Registered Users & Owners</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-system">⚠️ CEO Cannot Modify Any Data</div>
+
+      <div class="divider"></div>
+      <div class="section-title">Earnings Management</div>
+
+      <div class="node node-ceo">💰 Today's Earnings (10% platform fee)</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-ceo">📅 Weekly Earnings View</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-ceo">📆 Monthly Earnings View</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-ceo">📈 Annual + Total Earnings View</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-ceo">Already Withdrawn vs Pending Balance</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-decision">Request Withdrawal?</div>
+      <div class="branch">
+        <div class="branch-item">
+          <span class="branch-label yes">YES</span>
+          <div class="node node-success" style="width:100%">Dummy Withdraw ✓<br/>(RazorPay later)</div>
+        </div>
+        <div class="branch-item">
+          <span class="branch-label no">NO</span>
+          <div class="node node-ceo" style="width:100%">Balance Stays</div>
+        </div>
+      </div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+      <div class="node node-end">CEO Session Complete 👑</div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION 2: PAYMENT + EMAIL + CHAT FLOW -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-head">
+  <div class="section-badge">02</div>
+  <h2>Payment → Email → Chat Flow</h2>
+  <div class="section-head-line"></div>
+</div>
+
+<div class="full-section">
+  <div class="flow-row">
+    <div class="flow-node">User Selects<br/>Dates & Property</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node">Booking<br/>Summary Page</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node payment">💳 Dummy<br/>Payment</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node success">✓ Payment<br/>Success</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node system">10% Fee →<br/>CEO Pool</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node email">📧 Invoice to<br/>User Email</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node email">📧 Booking Alert<br/>to Owner Email</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node chat">💬 Chat<br/>Unlocked</div>
+  </div>
+  <br/>
+  <div class="flow-row">
+    <div class="flow-node payment">💳 Payment<br/>Fails</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node error">❌ Booking<br/>Cancelled</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node email">📧 Refund Email<br/>to User</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node system">Refund in<br/>3-4 Days</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node">User Can<br/>Retry Booking</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION 3: OTP FLOW -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-head">
+  <div class="section-badge">03</div>
+  <h2>OTP Verification Flow (Gmail SMTP)</h2>
+  <div class="section-head-line"></div>
+</div>
+
+<div class="full-section">
+  <div class="flow-row">
+    <div class="flow-node">User / Owner<br/>Registers</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node system">Generate 6-digit<br/>OTP in DB</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node otp">📧 Send OTP via<br/>Gmail SMTP</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node">User Enters<br/>OTP</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node system">Check OTP<br/>+ Expiry (10 min)</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node success">✓ Verified →<br/>Account Active</div>
+  </div>
+  <br/>
+  <div class="flow-row">
+    <div class="flow-node error">Wrong / Expired<br/>OTP</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node otp">Resend OTP<br/>(max 3 tries)</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node error">3 Fails →<br/>Account Locked</div>
+    <div class="flow-arrow-h">→</div>
+    <div class="flow-node system">Try Again<br/>After 30 min</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION 4: DATABASE TABLES -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-head">
+  <div class="section-badge">04</div>
+  <h2>Database Design (SQL Server)</h2>
+  <div class="section-head-line"></div>
+</div>
+
+<div class="db-grid">
+  <div class="db-table">
+    <div class="db-table-header">👤 Users</div>
+    <div class="db-table-row"><span class="pk">PK</span> UserId</div>
+    <div class="db-table-row">FullName</div>
+    <div class="db-table-row">Email (unique)</div>
+    <div class="db-table-row">Phone</div>
+    <div class="db-table-row">PasswordHash</div>
+    <div class="db-table-row">Role (Renter/Owner/CEO)</div>
+    <div class="db-table-row">IsVerified</div>
+    <div class="db-table-row">OTP + OTPExpiry</div>
+    <div class="db-table-row">CreatedAt</div>
+  </div>
+  <div class="db-table">
+    <div class="db-table-header">🏠 Properties</div>
+    <div class="db-table-row"><span class="pk">PK</span> PropertyId</div>
+    <div class="db-table-row"><span class="fk">FK</span> OwnerId → Users</div>
+    <div class="db-table-row">Title, Description</div>
+    <div class="db-table-row">Type (Flat/Villa/Apt)</div>
+    <div class="db-table-row">Location, City</div>
+    <div class="db-table-row">PricePerNight</div>
+    <div class="db-table-row">CheckInTime, CheckOutTime</div>
+    <div class="db-table-row">NearestTransport</div>
+    <div class="db-table-row">Rules, Amenities</div>
+    <div class="db-table-row">IsAvailable</div>
+  </div>
+  <div class="db-table">
+    <div class="db-table-header">🖼️ PropertyImages</div>
+    <div class="db-table-row"><span class="pk">PK</span> ImageId</div>
+    <div class="db-table-row"><span class="fk">FK</span> PropertyId</div>
+    <div class="db-table-row">ImageUrl (server path)</div>
+    <div class="db-table-row">DisplayOrder (1-5)</div>
+    <div class="db-table-row">UploadedAt</div>
+  </div>
+  <div class="db-table">
+    <div class="db-table-header">📅 Bookings</div>
+    <div class="db-table-row"><span class="pk">PK</span> BookingId</div>
+    <div class="db-table-row"><span class="fk">FK</span> UserId → Users</div>
+    <div class="db-table-row"><span class="fk">FK</span> PropertyId</div>
+    <div class="db-table-row">CheckInDate</div>
+    <div class="db-table-row">CheckOutDate</div>
+    <div class="db-table-row">TotalAmount</div>
+    <div class="db-table-row">PlatformFee (10%)</div>
+    <div class="db-table-row">Status (Pending/Confirmed)</div>
+    <div class="db-table-row">PaymentStatus</div>
+    <div class="db-table-row">BookedAt</div>
+  </div>
+  <div class="db-table">
+    <div class="db-table-header">💬 Messages</div>
+    <div class="db-table-row"><span class="pk">PK</span> MessageId</div>
+    <div class="db-table-row"><span class="fk">FK</span> BookingId</div>
+    <div class="db-table-row"><span class="fk">FK</span> SenderId → Users</div>
+    <div class="db-table-row"><span class="fk">FK</span> ReceiverId → Users</div>
+    <div class="db-table-row">Content</div>
+    <div class="db-table-row">SentAt</div>
+    <div class="db-table-row">IsRead</div>
+  </div>
+  <div class="db-table">
+    <div class="db-table-header">💰 Earnings</div>
+    <div class="db-table-row"><span class="pk">PK</span> EarningId</div>
+    <div class="db-table-row"><span class="fk">FK</span> BookingId</div>
+    <div class="db-table-row">Amount (10%)</div>
+    <div class="db-table-row">EarnedAt</div>
+    <div class="db-table-row">IsWithdrawn</div>
+    <div class="db-table-row">WithdrawnAt</div>
+  </div>
+  <div class="db-table">
+    <div class="db-table-header">📧 OTPVerifications</div>
+    <div class="db-table-row"><span class="pk">PK</span> OTPId</div>
+    <div class="db-table-row"><span class="fk">FK</span> UserId → Users</div>
+    <div class="db-table-row">OTPCode</div>
+    <div class="db-table-row">ExpiresAt</div>
+    <div class="db-table-row">IsUsed</div>
+    <div class="db-table-row">Attempts (max 3)</div>
+  </div>
+  <div class="db-table">
+    <div class="db-table-header">⭐ Reviews</div>
+    <div class="db-table-row"><span class="pk">PK</span> ReviewId</div>
+    <div class="db-table-row"><span class="fk">FK</span> BookingId</div>
+    <div class="db-table-row"><span class="fk">FK</span> UserId → Users</div>
+    <div class="db-table-row"><span class="fk">FK</span> PropertyId</div>
+    <div class="db-table-row">Rating (1-5)</div>
+    <div class="db-table-row">Comment</div>
+    <div class="db-table-row">CreatedAt</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION 5: API ENDPOINTS -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-head">
+  <div class="section-badge">05</div>
+  <h2>API Endpoints (.NET Core Web API)</h2>
+  <div class="section-head-line"></div>
+</div>
+
+<div class="api-grid">
+  <div class="api-group">
+    <div class="api-group-header" style="background:#0d4f4f;">🔐 Auth Controller</div>
+    <div class="api-row"><span class="method post">POST</span>/api/auth/register</div>
+    <div class="api-row"><span class="method post">POST</span>/api/auth/verify-otp</div>
+    <div class="api-row"><span class="method post">POST</span>/api/auth/resend-otp</div>
+    <div class="api-row"><span class="method post">POST</span>/api/auth/login</div>
+    <div class="api-row"><span class="method post">POST</span>/api/auth/logout</div>
+    <div class="api-row"><span class="method get">GET</span>/api/auth/me</div>
+  </div>
+  <div class="api-group">
+    <div class="api-group-header" style="background:#1a5276;">🏠 Property Controller</div>
+    <div class="api-row"><span class="method get">GET</span>/api/properties</div>
+    <div class="api-row"><span class="method get">GET</span>/api/properties/{id}</div>
+    <div class="api-row"><span class="method get">GET</span>/api/properties/search</div>
+    <div class="api-row"><span class="method post">POST</span>/api/properties (Owner)</div>
+    <div class="api-row"><span class="method put">PUT</span>/api/properties/{id}</div>
+    <div class="api-row"><span class="method del">DEL</span>/api/properties/{id}</div>
+    <div class="api-row"><span class="method post">POST</span>/api/properties/{id}/images</div>
+  </div>
+  <div class="api-group">
+    <div class="api-group-header" style="background:#1a5276;">📅 Booking Controller</div>
+    <div class="api-row"><span class="method post">POST</span>/api/bookings</div>
+    <div class="api-row"><span class="method get">GET</span>/api/bookings/my</div>
+    <div class="api-row"><span class="method get">GET</span>/api/bookings/{id}</div>
+    <div class="api-row"><span class="method put">PUT</span>/api/bookings/{id}/confirm</div>
+    <div class="api-row"><span class="method get">GET</span>/api/bookings/availability/{propId}</div>
+  </div>
+  <div class="api-group">
+    <div class="api-group-header" style="background:#00695c;">💬 Message Controller</div>
+    <div class="api-row"><span class="method post">POST</span>/api/messages/send</div>
+    <div class="api-row"><span class="method get">GET</span>/api/messages/{bookingId}</div>
+    <div class="api-row"><span class="method put">PUT</span>/api/messages/read/{id}</div>
+    <div class="api-row" style="color:#4ecdc4;font-size:0.72rem;padding-top:8px;">🔌 SignalR Hub: /hubs/chat</div>
+  </div>
+  <div class="api-group">
+    <div class="api-group-header" style="background:#6a1b9a;">💳 Payment Controller</div>
+    <div class="api-row"><span class="method post">POST</span>/api/payment/initiate</div>
+    <div class="api-row"><span class="method post">POST</span>/api/payment/confirm</div>
+    <div class="api-row"><span class="method post">POST</span>/api/payment/refund</div>
+    <div class="api-row"><span class="method get">GET</span>/api/payment/invoice/{bookingId}</div>
+  </div>
+  <div class="api-group">
+    <div class="api-group-header" style="background:#4a235a;">👑 CEO Controller</div>
+    <div class="api-row"><span class="method get">GET</span>/api/ceo/dashboard</div>
+    <div class="api-row"><span class="method get">GET</span>/api/ceo/earnings</div>
+    <div class="api-row"><span class="method get">GET</span>/api/ceo/earnings/summary</div>
+    <div class="api-row"><span class="method post">POST</span>/api/ceo/withdraw</div>
+    <div class="api-row"><span class="method get">GET</span>/api/ceo/users</div>
+    <div class="api-row"><span class="method get">GET</span>/api/ceo/properties</div>
+    <div class="api-row"><span class="method get">GET</span>/api/ceo/bookings</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION 6: SPRINT PLAN -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section-head">
+  <div class="section-badge">06</div>
+  <h2>Sprint Plan (5–6 Days)</h2>
+  <div class="section-head-line"></div>
+</div>
+
+<div class="sprint-grid">
+  <div class="sprint-card">
+    <div class="sprint-header s1">🗓️ Sprint 1 — Day 1 & 2 · Foundation</div>
+    <div class="sprint-item">GitHub repo setup: branches Sprint1, Sprint2, Sprint3 → main</div>
+    <div class="sprint-item">SQL Server DB schema creation in SSMS (all tables)</div>
+    <div class="sprint-item">.NET Core Web API project setup in Visual Studio</div>
+    <div class="sprint-item">Entity Framework Core + DB context + migrations</div>
+    <div class="sprint-item">Auth: Register, BCrypt hash, OTP via Gmail SMTP</div>
+    <div class="sprint-item">Auth: Login, JWT token, HTTP-only cookie set</div>
+    <div class="sprint-item">Auth: Logout, role-based middleware (Renter/Owner/CEO)</div>
+    <div class="sprint-item">Angular project setup in VS Code + routing + teal theme</div>
+    <div class="sprint-item">Angular: Register, Login, OTP verify pages</div>
+    <div class="sprint-item">Test all auth APIs on Postman</div>
+  </div>
+  <div class="sprint-card">
+    <div class="sprint-header s2">🗓️ Sprint 2 — Day 3 & 4 · Core Features</div>
+    <div class="sprint-item">Owner dashboard: add/edit/delete properties with image upload</div>
+    <div class="sprint-item">Property images stored in server wwwroot folder</div>
+    <div class="sprint-item">Set pricing, check-in/out times, amenities, rules, transport</div>
+    <div class="sprint-item">Home page: top-rated properties, search & filter API</div>
+    <div class="sprint-item">Property detail page: photo gallery, calendar availability</div>
+    <div class="sprint-item">Booking flow: summary page → dummy payment → confirm</div>
+    <div class="sprint-item">Post-payment: invoice PDF auto-email to user (NestInn theme)</div>
+    <div class="sprint-item">Booking alert email sent to owner</div>
+    <div class="sprint-item">Owner: confirm/decline reservation in dashboard</div>
+    <div class="sprint-item">Test all booking & property APIs on Postman + Swagger UI</div>
+  </div>
+  <div class="sprint-card">
+    <div class="sprint-header s3">🗓️ Sprint 3 — Day 5 & 6 · Advanced + Polish</div>
+    <div class="sprint-item">Real-time chat with SignalR (unlock after payment success)</div>
+    <div class="sprint-item">CEO dashboard: read-only view of all data</div>
+    <div class="sprint-item">CEO earnings: today/week/month/annual with charts (Chart.js)</div>
+    <div class="sprint-item">CEO withdraw flow (dummy) + withdrawn vs pending balance</div>
+    <div class="sprint-item">Footer: Support, Hosting, NestInn sections (Airbnb-style)</div>
+    <div class="sprint-item">Email templates styled to match NestInn teal theme</div>
+    <div class="sprint-item">Full Swagger UI documentation for all endpoints</div>
+    <div class="sprint-item">Final Postman collection: all endpoints tested</div>
+    <div class="sprint-item">Merge Sprint branches → main on GitHub</div>
+    <div class="sprint-item">Final review, code cleanup, capstone report writing</div>
+  </div>
+</div>
+
+</body>
+</html>

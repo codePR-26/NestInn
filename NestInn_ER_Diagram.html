@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>NestInn ER Diagram</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0e14; font-family:'Courier New',monospace; overflow:hidden; }
+  #header { background:linear-gradient(135deg,#0d4f4f,#0a3d2e); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #4ecdc4; }
+  #title { color:#4ecdc4; font-weight:700; font-size:20px; letter-spacing:2px; }
+  #subtitle { color:#ffffff88; font-size:13px; margin-left:12px; }
+  #controls { display:flex; gap:8px; align-items:center; }
+  #legend { display:flex; gap:20px; padding:8px 24px; background:#0d1117; border-bottom:1px solid #ffffff11; flex-wrap:wrap; align-items:center; }
+  .legend-item { display:flex; align-items:center; gap:6px; font-size:12px; color:#ffffff88; }
+  .hint { color:#ffffff44; font-size:11px; margin-left:auto; }
+  button { background:#4ecdc420; border:1px solid #4ecdc4; color:#4ecdc4; border-radius:4px; cursor:pointer; font-size:14px; padding:3px 10px; }
+  button:hover { background:#4ecdc440; }
+  #zoom-label { color:#fff; font-size:13px; min-width:42px; text-align:center; }
+  #canvas { cursor:grab; display:block; }
+  #canvas:active { cursor:grabbing; }
+</style>
+</head>
+<body>
+<div id="header">
+  <div><span id="title">NestInn</span><span id="subtitle">Entity Relationship Diagram</span></div>
+  <div id="controls">
+    <span style="color:#ffffff55;font-size:12px">zoom</span>
+    <button onclick="changeZoom(0.1)">+</button>
+    <span id="zoom-label">72%</span>
+    <button onclick="changeZoom(-0.1)">−</button>
+    <button onclick="resetView()" style="margin-left:8px;font-size:12px">Reset</button>
+  </div>
+</div>
+<div id="legend">
+  <div class="legend-item"><span style="color:#f4d03f">🔑</span> Primary Key</div>
+  <div class="legend-item"><span style="color:#5dade2">🔗</span> Foreign Key</div>
+  <div class="legend-item"><span style="color:#4ecdc4">★</span> Unique</div>
+  <div class="legend-item"><span style="color:#58d68d">─ ─</span> Relationship</div>
+  <div class="hint">Click a table to highlight relationships &nbsp;|&nbsp; Drag to pan &nbsp;|&nbsp; Scroll to zoom</div>
+</div>
+<canvas id="canvas"></canvas>
+
+<script>
+const TABLES = [
+  { name:"Users", color:"#0d4f4f", accent:"#4ecdc4", x:40, y:40,
+    fields:[
+      {name:"UserId",type:"INT",pk:true},
+      {name:"FullName",type:"NVARCHAR(100)"},
+      {name:"Email",type:"NVARCHAR(150)",unique:true},
+      {name:"Phone",type:"NVARCHAR(15)"},
+      {name:"PasswordHash",type:"NVARCHAR(MAX)"},
+      {name:"Role",type:"NVARCHAR(20)"},
+      {name:"IsVerified",type:"BIT"},
+      {name:"ProfilePicture",type:"NVARCHAR(MAX)"},
+      {name:"CreatedAt",type:"DATETIME2"},
+    ]},
+  { name:"OTPVerifications", color:"#1a3a5c", accent:"#5dade2", x:560, y:40,
+    fields:[
+      {name:"OTPId",type:"INT",pk:true},
+      {name:"UserId",type:"INT",fk:"Users"},
+      {name:"OTPCode",type:"NVARCHAR(6)"},
+      {name:"ExpiresAt",type:"DATETIME2"},
+      {name:"IsUsed",type:"BIT"},
+      {name:"Attempts",type:"INT"},
+      {name:"CreatedAt",type:"DATETIME2"},
+    ]},
+  { name:"Properties", color:"#0a3d2e", accent:"#58d68d", x:40, y:400,
+    fields:[
+      {name:"PropertyId",type:"INT",pk:true},
+      {name:"OwnerId",type:"INT",fk:"Users"},
+      {name:"Title",type:"NVARCHAR(200)"},
+      {name:"PropertyType",type:"NVARCHAR(50)"},
+      {name:"Location",type:"NVARCHAR(200)"},
+      {name:"City",type:"NVARCHAR(100)"},
+      {name:"PricePerNight",type:"DECIMAL(10,2)"},
+      {name:"CheckInTime",type:"NVARCHAR(20)"},
+      {name:"CheckOutTime",type:"NVARCHAR(20)"},
+      {name:"Amenities",type:"NVARCHAR(MAX)"},
+      {name:"IsAvailable",type:"BIT"},
+      {name:"Rating",type:"DECIMAL(3,2)"},
+      {name:"CreatedAt",type:"DATETIME2"},
+    ]},
+  { name:"PropertyImages", color:"#3d1a5c", accent:"#bb8fce", x:560, y:400,
+    fields:[
+      {name:"ImageId",type:"INT",pk:true},
+      {name:"PropertyId",type:"INT",fk:"Properties"},
+      {name:"ImageUrl",type:"NVARCHAR(MAX)"},
+      {name:"DisplayOrder",type:"INT"},
+      {name:"UploadedAt",type:"DATETIME2"},
+    ]},
+  { name:"Bookings", color:"#4a3000", accent:"#f4d03f", x:40, y:790,
+    fields:[
+      {name:"BookingId",type:"INT",pk:true},
+      {name:"UserId",type:"INT",fk:"Users"},
+      {name:"PropertyId",type:"INT",fk:"Properties"},
+      {name:"CheckInDate",type:"DATETIME2"},
+      {name:"CheckOutDate",type:"DATETIME2"},
+      {name:"TotalNights",type:"INT"},
+      {name:"TotalAmount",type:"DECIMAL(10,2)"},
+      {name:"PlatformFee",type:"DECIMAL(10,2)"},
+      {name:"OwnerAmount",type:"DECIMAL(10,2)"},
+      {name:"BookingStatus",type:"NVARCHAR(20)"},
+      {name:"PaymentStatus",type:"NVARCHAR(20)"},
+      {name:"BookedAt",type:"DATETIME2"},
+    ]},
+  { name:"Messages", color:"#4a0f0f", accent:"#f1948a", x:560, y:790,
+    fields:[
+      {name:"MessageId",type:"INT",pk:true},
+      {name:"BookingId",type:"INT",fk:"Bookings"},
+      {name:"SenderId",type:"INT",fk:"Users"},
+      {name:"ReceiverId",type:"INT",fk:"Users"},
+      {name:"Content",type:"NVARCHAR(MAX)"},
+      {name:"SentAt",type:"DATETIME2"},
+      {name:"IsRead",type:"BIT"},
+    ]},
+  { name:"Earnings", color:"#0a2a4a", accent:"#85c1e9", x:40, y:1160,
+    fields:[
+      {name:"EarningId",type:"INT",pk:true},
+      {name:"BookingId",type:"INT",fk:"Bookings"},
+      {name:"Amount",type:"DECIMAL(10,2)"},
+      {name:"EarnedAt",type:"DATETIME2"},
+      {name:"IsWithdrawn",type:"BIT"},
+      {name:"WithdrawnAt",type:"DATETIME2"},
+    ]},
+  { name:"Reviews", color:"#4a2000", accent:"#f0b27a", x:560, y:1160,
+    fields:[
+      {name:"ReviewId",type:"INT",pk:true},
+      {name:"BookingId",type:"INT",fk:"Bookings"},
+      {name:"UserId",type:"INT",fk:"Users"},
+      {name:"PropertyId",type:"INT",fk:"Properties"},
+      {name:"Rating",type:"INT"},
+      {name:"Comment",type:"NVARCHAR(MAX)"},
+      {name:"CreatedAt",type:"DATETIME2"},
+    ]},
+];
+
+const RELS = [
+  {from:"OTPVerifications",ff:"UserId",to:"Users",tf:"UserId",label:"belongs to"},
+  {from:"Properties",ff:"OwnerId",to:"Users",tf:"UserId",label:"owned by"},
+  {from:"PropertyImages",ff:"PropertyId",to:"Properties",tf:"PropertyId",label:"belongs to"},
+  {from:"Bookings",ff:"UserId",to:"Users",tf:"UserId",label:"made by"},
+  {from:"Bookings",ff:"PropertyId",to:"Properties",tf:"PropertyId",label:"for property"},
+  {from:"Messages",ff:"BookingId",to:"Bookings",tf:"BookingId",label:"for booking"},
+  {from:"Earnings",ff:"BookingId",to:"Bookings",tf:"BookingId",label:"from booking"},
+  {from:"Reviews",ff:"BookingId",to:"Bookings",tf:"BookingId",label:"for booking"},
+  {from:"Reviews",ff:"UserId",to:"Users",tf:"UserId",label:"written by"},
+  {from:"Reviews",ff:"PropertyId",to:"Properties",tf:"PropertyId",label:"about"},
+];
+
+const TW=300, HEADER_H=38, ROW_H=26;
+function tableH(t){return HEADER_H+t.fields.length*ROW_H+10;}
+function fieldY(t,fn){
+  const i=t.fields.findIndex(f=>f.name===fn);
+  return t.y+HEADER_H+i*ROW_H+ROW_H/2+5;
+}
+function getTable(name){return TABLES.find(t=>t.name===name);}
+
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+let zoom=0.72, panX=30, panY=30;
+let isDragging=false, dragSX=0, dragSY=0;
+let selectedTable=null, hoveredTable=null;
+
+function resize(){
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight-80;
+  draw();
+}
+
+function changeZoom(d){
+  zoom=Math.min(Math.max(zoom+d,0.3),1.8);
+  document.getElementById('zoom-label').textContent=Math.round(zoom*100)+'%';
+  draw();
+}
+
+function resetView(){
+  zoom=0.72; panX=30; panY=30;
+  document.getElementById('zoom-label').textContent='72%';
+  draw();
+}
+
+function worldToScreen(x,y){return{x:x*zoom+panX,y:y*zoom+panY};}
+function screenToWorld(x,y){return{x:(x-panX)/zoom,y:(y-panY)/zoom};}
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#0a0e14';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // grid dots
+  ctx.fillStyle='#ffffff08';
+  const gs=40*zoom;
+  const ox=panX%gs, oy=panY%gs;
+  for(let x=ox;x<canvas.width;x+=gs)
+    for(let y=oy;y<canvas.height;y+=gs){
+      ctx.beginPath();
+      ctx.arc(x,y,1,0,Math.PI*2);
+      ctx.fill();
+    }
+
+  const activeTable=selectedTable||hoveredTable;
+  const highlighted=activeTable?new Set([activeTable,...RELS.filter(r=>r.from===activeTable||r.to===activeTable).flatMap(r=>[r.from,r.to])]):null;
+
+  // Draw relationships
+  RELS.forEach(rel=>{
+    const ft=getTable(rel.from), tt=getTable(rel.to);
+    if(!ft||!tt)return;
+    const isHi=activeTable&&(rel.from===activeTable||rel.to===activeTable);
+    const isDim=highlighted&&!isHi;
+
+    // from right side of fromTable to left side of toTable
+    const p1=worldToScreen(ft.x+TW, fieldY(ft,rel.ff));
+    const p2=worldToScreen(tt.x, fieldY(tt,rel.tf));
+    const mx=(p1.x+p2.x)/2;
+
+    ctx.beginPath();
+    ctx.moveTo(p1.x,p1.y);
+    ctx.bezierCurveTo(mx,p1.y,mx,p2.y,p2.x,p2.y);
+    ctx.strokeStyle=isHi?'#4ecdc4':isDim?'#ffffff08':'#4ecdc433';
+    ctx.lineWidth=isHi?2*zoom:1*zoom;
+    ctx.setLineDash(isHi?[]:[4,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // arrow
+    if(isHi){
+      const angle=Math.atan2(p2.y-p1.y,p2.x-p1.x);
+      const ax=p2.x, ay=p2.y;
+      ctx.beginPath();
+      ctx.moveTo(ax,ay);
+      ctx.lineTo(ax-10*zoom*Math.cos(angle-0.4),ay-10*zoom*Math.sin(angle-0.4));
+      ctx.lineTo(ax-10*zoom*Math.cos(angle+0.4),ay-10*zoom*Math.sin(angle+0.4));
+      ctx.closePath();
+      ctx.fillStyle='#4ecdc4';
+      ctx.fill();
+      // label
+      ctx.fillStyle='#4ecdc4aa';
+      ctx.font=`${10*zoom}px 'Courier New'`;
+      ctx.textAlign='center';
+      ctx.fillText(rel.label,(p1.x+p2.x)/2,(p1.y+p2.y)/2-5*zoom);
+    }
+  });
+
+  // Draw tables
+  TABLES.forEach(table=>{
+    const isActive=table.name===hoveredTable||table.name===selectedTable;
+    const isDim=highlighted&&!highlighted.has(table.name);
+    const h=tableH(table);
+    const s=worldToScreen(table.x,table.y);
+    const sw=TW*zoom, sh=h*zoom;
+
+    ctx.globalAlpha=isDim?0.2:1;
+
+    // Shadow
+    ctx.fillStyle='#00000066';
+    roundRect(s.x+4,s.y+4,sw,sh,8*zoom);
+    ctx.fill();
+
+    // Body
+    roundRect(s.x,s.y,sw,sh,8*zoom);
+    ctx.fillStyle=table.color;
+    ctx.fill();
+    if(isActive){
+      ctx.shadowColor=table.accent;
+      ctx.shadowBlur=15;
+    }
+    ctx.strokeStyle=isActive?table.accent:'#ffffff22';
+    ctx.lineWidth=isActive?2:1;
+    ctx.stroke();
+    ctx.shadowBlur=0;
+
+    // Header bg
+    ctx.fillStyle=table.accent+'33';
+    ctx.beginPath();
+    ctx.moveTo(s.x+8*zoom,s.y);
+    ctx.lineTo(s.x+sw-8*zoom,s.y);
+    ctx.quadraticCurveTo(s.x+sw,s.y,s.x+sw,s.y+8*zoom);
+    ctx.lineTo(s.x+sw,s.y+HEADER_H*zoom);
+    ctx.lineTo(s.x,s.y+HEADER_H*zoom);
+    ctx.lineTo(s.x,s.y+8*zoom);
+    ctx.quadraticCurveTo(s.x,s.y,s.x+8*zoom,s.y);
+    ctx.closePath();
+    ctx.fill();
+
+    // Header line
+    ctx.beginPath();
+    ctx.moveTo(s.x,s.y+HEADER_H*zoom);
+    ctx.lineTo(s.x+sw,s.y+HEADER_H*zoom);
+    ctx.strokeStyle=table.accent+'88';
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    // Table name
+    ctx.fillStyle=table.accent;
+    ctx.font=`bold ${13*zoom}px 'Courier New'`;
+    ctx.textAlign='center';
+    ctx.fillText(table.name,s.x+sw/2,s.y+HEADER_H*zoom/2+5*zoom);
+
+    // Fields
+    table.fields.forEach((field,fi)=>{
+      const fy=s.y+(HEADER_H+fi*ROW_H+5)*zoom;
+      if(fi%2===0){
+        ctx.fillStyle='#ffffff07';
+        ctx.fillRect(s.x+1,fy,sw-2,ROW_H*zoom);
+      }
+      // Icon
+      const icon=field.pk?'🔑':field.fk?'🔗':field.unique?'★':'';
+      if(icon){
+        ctx.font=`${11*zoom}px Arial`;
+        ctx.textAlign='left';
+        ctx.fillText(icon,s.x+6*zoom,fy+ROW_H*zoom*0.7);
+      }
+      // Field name
+      ctx.fillStyle=field.pk?'#f4d03f':field.fk?'#5dade2':'#ffffffcc';
+      ctx.font=`${11*zoom}px 'Courier New'`;
+      ctx.textAlign='left';
+      ctx.fillText(field.name,s.x+26*zoom,fy+ROW_H*zoom*0.7);
+      // Type
+      ctx.fillStyle='#ffffff44';
+      ctx.font=`${10*zoom}px 'Courier New'`;
+      ctx.textAlign='right';
+      ctx.fillText(field.type,s.x+sw-8*zoom,fy+ROW_H*zoom*0.7);
+    });
+
+    ctx.globalAlpha=1;
+  });
+}
+
+// Interaction
+canvas.addEventListener('mousedown',e=>{
+  isDragging=true;
+  dragSX=e.clientX-panX;
+  dragSY=e.clientY-panY;
+});
+canvas.addEventListener('mousemove',e=>{
+  if(isDragging){
+    panX=e.clientX-dragSX;
+    panY=e.clientY-dragSY;
+    draw();
+    return;
+  }
+  const w=screenToWorld(e.clientX,e.clientY);
+  let found=null;
+  TABLES.forEach(t=>{
+    if(w.x>=t.x&&w.x<=t.x+TW&&w.y>=t.y&&w.y<=t.y+tableH(t))found=t.name;
+  });
+  if(found!==hoveredTable){hoveredTable=found;draw();}
+  canvas.style.cursor=found?'pointer':isDragging?'grabbing':'grab';
+});
+canvas.addEventListener('mouseup',()=>{isDragging=false;});
+canvas.addEventListener('mouseleave',()=>{isDragging=false;});
+canvas.addEventListener('click',e=>{
+  const w=screenToWorld(e.clientX,e.clientY);
+  let found=null;
+  TABLES.forEach(t=>{
+    if(w.x>=t.x&&w.x<=t.x+TW&&w.y>=t.y&&w.y<=t.y+tableH(t))found=t.name;
+  });
+  selectedTable=found===selectedTable?null:found;
+  draw();
+});
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const d=e.deltaY>0?-0.08:0.08;
+  zoom=Math.min(Math.max(zoom+d,0.3),1.8);
+  document.getElementById('zoom-label').textContent=Math.round(zoom*100)+'%';
+  draw();
+},{passive:false});
+
+window.addEventListener('resize',resize);
+resize();
+</script>
+</body>
+</html>

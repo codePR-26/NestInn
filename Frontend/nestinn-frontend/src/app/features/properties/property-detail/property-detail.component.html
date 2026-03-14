@@ -1,0 +1,116 @@
+@if(loading()) {
+  <div class="loading-overlay" style="min-height:60vh"><div class="spinner"></div></div>
+} @else if(property()) {
+<div class="detail-page">
+  <div class="container">
+    <nav class="breadcrumb">
+      <a routerLink="/">Home</a> › <a routerLink="/properties">Properties</a> › <span>{{ property()!.title }}</span>
+    </nav>
+
+    <div class="detail-header">
+      <div>
+        <h1>{{ property()!.title }}</h1>
+        <div class="detail-meta">
+          <span class="badge badge-teal">{{ property()!.propertyType }}</span>
+          <span>📍 {{ property()!.location }}, {{ property()!.city }}</span>
+          @if(property()!.rating > 0) { <span>⭐ {{ property()!.rating | number:'1.1-1' }} rating</span> }
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-layout">
+      <div class="detail-main">
+        <!-- Gallery -->
+        <div class="gallery">
+          <div class="main-img">
+            <img [src]="getImg(activeImg)" [alt]="property()!.title">
+          </div>
+          <div class="thumb-strip">
+               @for(img of property()!.images || []; track img; let i = $index) {
+         <div class="thumb" [class.active]="i===activeImg" (click)="activeImg=i">
+          <img [src]="img" alt="">
+          </div>
+        }
+        </div>
+        </div>
+
+        <!-- Info -->
+        <div class="info-sections">
+          <div class="info-section">
+            <h3>About this property</h3>
+            <p>{{ property()!.description || 'No description provided.' }}</p>
+          </div>
+
+          <div class="info-section">
+            <h3>Amenities</h3>
+            <div class="amenities-grid">
+              @for(a of getAmenities(); track a) {
+                <div class="amenity-item">✓ {{ a }}</div>
+              }
+            </div>
+          </div>
+
+          @if(property()!.nearestTransport) {
+            <div class="info-section">
+              <h3>Nearest Transport</h3>
+              <p>🚉 {{ property()!.nearestTransport }}</p>
+            </div>
+          }
+
+          @if(property()!.rules) {
+            <div class="info-section">
+              <h3>House Rules</h3>
+              <p>{{ property()!.rules }}</p>
+            </div>
+          }
+
+          <div class="info-section">
+            <h3>Check-in / Check-out</h3>
+            <div class="checkin-row">
+              <div class="checkin-item"><span>🔑 Check-in</span><strong>{{ property()!.checkInTime }}</strong></div>
+              <div class="checkin-item"><span>🚪 Check-out</span><strong>{{ property()!.checkOutTime }}</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Panel -->
+      <aside class="booking-panel">
+        <div class="booking-card">
+          <div class="price-display">
+            <strong>₹{{ property()!.pricePerNight | number }}</strong>
+            <span>/ night</span>
+          </div>
+
+          <div class="date-grid">
+            <div class="form-group">
+              <label>Check In</label>
+              <input type="date" [(ngModel)]="checkIn" (ngModelChange)="calcNights()" [min]="today">
+            </div>
+            <div class="form-group">
+              <label>Check Out</label>
+              <input type="date" [(ngModel)]="checkOut" (ngModelChange)="calcNights()" [min]="checkIn">
+            </div>
+          </div>
+
+          @if(totalNights > 0) {
+            <div class="price-breakdown">
+              <div class="pb-row"><span>₹{{ property()!.pricePerNight | number }} × {{ totalNights }} nights</span><span>₹{{ property()!.pricePerNight * totalNights | number }}</span></div>
+              <div class="pb-row"><span>Platform fee (10%)</span><span>₹{{ (property()!.pricePerNight * totalNights * 0.1) | number:'1.0-0' }}</span></div>
+              <div class="pb-row total"><span>Total</span><span>₹{{ (property()!.pricePerNight * totalNights * 1.1) | number:'1.0-0' }}</span></div>
+            </div>
+          }
+
+          <button class="btn btn-primary btn-full btn-lg" (click)="reserve()" [disabled]="!property()!.isAvailable">
+            {{ property()!.isAvailable ? 'Reserve Now' : 'Not Available' }}
+          </button>
+
+          @if(!auth.isLoggedIn()) {
+            <p class="login-note"><a routerLink="/auth/login">Login</a> to make a booking</p>
+          }
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+}

@@ -1,0 +1,75 @@
+<div class="page-hero">
+  <div class="container">
+    <h1>Explore Properties</h1>
+    <p>{{ properties().length }} properties available</p>
+  </div>
+</div>
+
+<div class="container list-layout">
+  <aside class="filters">
+    <div class="filter-header">
+      <h3>Filters</h3>
+      <button (click)="reset()" class="btn btn-ghost btn-sm">Reset</button>
+    </div>
+
+    <div class="form-group">
+      <label>City / Location</label>
+      <input type="text" [(ngModel)]="filters.city" placeholder="e.g. Mumbai, Goa">
+    </div>
+    <div class="form-group">
+      <label>Property Type</label>
+      <select [(ngModel)]="filters.propertyType">
+        @for(t of types; track t) { <option [value]="t==='All'?'':t">{{ t }}</option> }
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Check In</label>
+      <input type="date" [(ngModel)]="filters.checkIn">
+    </div>
+    <div class="form-group">
+      <label>Check Out</label>
+      <input type="date" [(ngModel)]="filters.checkOut">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Min Price (₹)</label>
+        <input type="number" [(ngModel)]="filters.minPrice" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Max Price (₹)</label>
+        <input type="number" [(ngModel)]="filters.maxPrice" placeholder="50000">
+      </div>
+    </div>
+    <button (click)="load()" class="btn btn-primary btn-full">Apply Filters</button>
+  </aside>
+
+  <main class="results">
+    <div class="results-header">
+      <span class="results-count">{{ properties().length }} properties found</span>
+      <div class="sort-wrap">
+        <label>Sort by:</label>
+        <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+          <option value="rating">Top Rated</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    @if(loading()) {
+      <div class="loading-overlay"><div class="spinner"></div></div>
+    } @else if(properties().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>No properties found</h3>
+        <p>Try changing your filters</p>
+      </div>
+    } @else {
+      <div class="results-grid">
+        @for(p of properties(); track p.propertyId) {
+          <app-property-card [property]="p"></app-property-card>
+        }
+      </div>
+    }
+  </main>
+</div>

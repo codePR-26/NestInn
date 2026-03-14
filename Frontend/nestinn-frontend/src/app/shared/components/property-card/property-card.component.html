@@ -1,0 +1,25 @@
+<div class="card prop-card" [routerLink]="['/properties', property.propertyId]">
+  <div class="prop-img">
+    <img [src]="getImage()" [alt]="property.title" loading="lazy">
+    <div class="prop-type badge badge-teal">{{ property.propertyType }}</div>
+    @if(property.rating > 0) {
+      <div class="prop-rating">⭐ {{ property.rating | number:'1.1-1' }}</div>
+    }
+  </div>
+  <div class="prop-body">
+    <h3>{{ property.title }}</h3>
+    <p class="prop-location">📍 {{ property.city }}</p>
+    <div class="prop-amenities">
+      @for(a of property.amenities!.split(',').slice(0,3); track a) {
+        <span class="amenity-tag">{{ a.trim() }}</span>
+      }
+    </div>
+    <div class="prop-footer">
+      <div class="prop-price">
+        <strong>₹{{ property.pricePerNight | number }}</strong>
+        <span>/ night</span>
+      </div>
+      <button class="btn btn-primary btn-sm">View →</button>
+    </div>
+  </div>
+</div>

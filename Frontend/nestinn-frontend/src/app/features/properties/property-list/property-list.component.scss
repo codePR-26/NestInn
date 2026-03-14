@@ -1,0 +1,9 @@
+.list-layout { display: grid; grid-template-columns: 280px 1fr; gap: 32px; padding-top: 32px; padding-bottom: 60px; }
+.filters { background: white; border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); height: fit-content; position: sticky; top: 88px; }
+.filter-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; h3 { font-size: 1rem; font-weight: 700; } }
+.results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.results-count { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
+.sort-wrap { display: flex; align-items: center; gap: 8px; label { font-size: 0.85rem; color: var(--text-secondary); } select { padding: 6px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 0.85rem; } }
+.results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 1024px) { .results-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .list-layout { grid-template-columns: 1fr; } .filters { position: static; } .results-grid { grid-template-columns: 1fr; } }
