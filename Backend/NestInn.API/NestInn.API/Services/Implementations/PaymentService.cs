@@ -4,6 +4,9 @@ using NestInn.API.DTOs.Payment;
 using NestInn.API.Models;
 using NestInn.API.Services.Interfaces;
 using System.Text;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace NestInn.API.Services.Implementations
 {
@@ -33,14 +36,13 @@ namespace NestInn.API.Services.Implementations
             if (booking.PaymentStatus == "Success")
                 throw new Exception("Payment already completed.");
 
-            // Dummy payment - always succeeds
-            // Will be replaced by RazorPay later
+            
             var transactionId = $"NESTINN-{Guid.NewGuid().ToString()[..8].ToUpper()}";
 
             booking.PaymentStatus = "Success";
             await _context.SaveChangesAsync();
 
-            // Create earning record (10% platform fee)
+            
             var earning = new Earning
             {
                 BookingId = booking.BookingId,
@@ -52,17 +54,16 @@ namespace NestInn.API.Services.Implementations
             _context.Earnings.Add(earning);
             await _context.SaveChangesAsync();
 
-            // Generate invoice
             var invoicePdf = await GenerateInvoiceAsync(booking.BookingId);
 
-            // Send invoice to user
+            
             await _emailService.SendInvoiceEmailAsync(
                 booking.User.Email,
                 booking.User.FullName,
                 invoicePdf,
                 booking.BookingId);
 
-            // Send booking alert to owner
+           
             await _emailService.SendOwnerBookingAlertAsync(
                 booking.Property.Owner.Email,
                 booking.Property.Owner.FullName,
@@ -89,7 +90,7 @@ namespace NestInn.API.Services.Implementations
             booking.PaymentStatus = "Refunded";
             booking.BookingStatus = "Cancelled";
 
-            // Remove earning record
+            
             var earning = await _context.Earnings
                 .FirstOrDefaultAsync(e => e.BookingId == bookingId);
             if (earning != null)
@@ -97,7 +98,7 @@ namespace NestInn.API.Services.Implementations
 
             await _context.SaveChangesAsync();
 
-            // Send refund email
+           
             await _emailService.SendRefundEmailAsync(
                 booking.User.Email,
                 booking.User.FullName,
@@ -120,48 +121,45 @@ namespace NestInn.API.Services.Implementations
                 .FirstOrDefaultAsync(b => b.BookingId == bookingId)
                 ?? throw new Exception("Booking not found.");
 
-            // Generate HTML invoice as bytes
-            // In Sprint 3 we'll convert to PDF using a library
-            var html = $@"
-            <!DOCTYPE html>
-            <html>
-            <head><style>
-                body {{ font-family: 'Segoe UI', sans-serif; background: #f0f7f7; margin: 0; padding: 20px; }}
-                .invoice {{ max-width: 700px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; }}
-                .header {{ background: linear-gradient(135deg, #0d4f4f, #1a7a7a); padding: 30px; color: #fff; }}
-                .header h1 {{ color: #4ecdc4; margin: 0; font-size: 1.8rem; }}
-                .header p {{ color: rgba(255,255,255,0.7); margin: 4px 0 0; }}
-                .body {{ padding: 30px; }}
-                .row {{ display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f7f7; }}
-                .label {{ color: #888; }}
-                .value {{ font-weight: 600; color: #0d4f4f; }}
-                .total {{ background: #f0f7f7; border-radius: 8px; padding: 16px; margin-top: 20px; }}
-                .footer {{ background: #0d4f4f; padding: 16px; text-align: center; color: rgba(255,255,255,0.5); font-size: 0.8rem; }}
-            </style></head>
-            <body>
-                <div class='invoice'>
-                    <div class='header'>
-                        <h1>NestInn</h1>
-                        <p>Booking Invoice #{booking.BookingId}</p>
-                    </div>
-                    <div class='body'>
-                        <div class='row'><span class='label'>Guest Name</span><span class='value'>{booking.User.FullName}</span></div>
-                        <div class='row'><span class='label'>Property</span><span class='value'>{booking.Property.Title}</span></div>
-                        <div class='row'><span class='label'>Location</span><span class='value'>{booking.Property.City}</span></div>
-                        <div class='row'><span class='label'>Check-In</span><span class='value'>{booking.CheckInDate:dd MMM yyyy}</span></div>
-                        <div class='row'><span class='label'>Check-Out</span><span class='value'>{booking.CheckOutDate:dd MMM yyyy}</span></div>
-                        <div class='row'><span class='label'>Total Nights</span><span class='value'>{booking.TotalNights}</span></div>
-                        <div class='row'><span class='label'>Price/Night</span><span class='value'>₹{booking.Property.PricePerNight:N2}</span></div>
-                        <div class='total'>
-                            <div class='row'><span class='label'>Total Amount</span><span class='value'>₹{booking.TotalAmount:N2}</span></div>
-                        </div>
-                    </div>
-                    <div class='footer'>© 2026 NestInn, Inc. · Thank you for choosing NestInn!</div>
-                </div>
-            </body>
-            </html>";
+            var pdf = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(40);
 
-            return Encoding.UTF8.GetBytes(html);
+                    page.Header().Text("NestInn Booking Invoice")
+                        .FontSize(24)
+                        .Bold()
+                        .AlignCenter();
+
+                    page.Content().Column(col =>
+                    {
+                        col.Spacing(10);
+
+                        col.Item().Text($"Invoice #: {booking.BookingId}");
+                        col.Item().Text($"Guest: {booking.User.FullName}");
+                        col.Item().Text($"Property: {booking.Property.Title}");
+                        col.Item().Text($"Location: {booking.Property.City}");
+                        col.Item().Text($"Check-In: {booking.CheckInDate:dd MMM yyyy}");
+                        col.Item().Text($"Check-Out: {booking.CheckOutDate:dd MMM yyyy}");
+                        col.Item().Text($"Total Nights: {booking.TotalNights}");
+                        col.Item().Text($"Price/Night: ₹{booking.Property.PricePerNight:N2}");
+
+                        col.Item().LineHorizontal(1);
+
+                        col.Item().Text($"Total Amount: ₹{booking.TotalAmount:N2}")
+                            .FontSize(16)
+                            .Bold();
+                    });
+
+                    page.Footer()
+                        .AlignCenter()
+                        .Text("© 2026 NestInn, Inc.");
+                });
+            }).GeneratePdf();
+
+            return pdf;
         }
     }
 }

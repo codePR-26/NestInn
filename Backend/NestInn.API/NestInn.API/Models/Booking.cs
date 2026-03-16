@@ -28,18 +28,17 @@ namespace NestInn.API.Models
         public decimal TotalAmount { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
-        public decimal PlatformFee { get; set; } // 10%
+        public decimal PlatformFee { get; set; } 
 
         [Column(TypeName = "decimal(10,2)")]
-        public decimal OwnerAmount { get; set; } // 90%
+        public decimal OwnerAmount { get; set; } 
 
-        public string BookingStatus { get; set; } = "Pending"; // Pending, Confirmed, Declined, Cancelled
+        public string BookingStatus { get; set; } = "Pending"; 
 
-        public string PaymentStatus { get; set; } = "Pending"; // Pending, Success, Failed, Refunded
+        public string PaymentStatus { get; set; } = "Pending"; 
 
         public DateTime BookedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation
         [ForeignKey("UserId")]
         public User User { get; set; } = null!;
 

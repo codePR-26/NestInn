@@ -19,7 +19,7 @@ namespace NestInn.API.Models
 
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation
+       
         [ForeignKey("PropertyId")]
         public Property Property { get; set; } = null!;
     }

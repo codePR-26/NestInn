@@ -28,7 +28,7 @@ namespace NestInn.API.Services.Implementations
             if (!property.IsAvailable)
                 throw new Exception("Property is not available.");
 
-            // Check date conflict
+            
             var conflict = await _context.Bookings
                 .AnyAsync(b =>
                     b.PropertyId == dto.PropertyId &&

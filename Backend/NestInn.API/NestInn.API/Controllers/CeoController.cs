@@ -8,7 +8,7 @@ namespace NestInn.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "CEO")]
+    [Authorize(Roles = "CEO")]   // I'm the Boss.
     public class CeoController : ControllerBase
     {
         private readonly ICeoService _ceoService;
@@ -26,9 +26,9 @@ namespace NestInn.API.Controllers
                 var result = await _ceoService.GetDashboardSummaryAsync();
                 return Ok(ApiResponse<DashboardSummaryDto>.Ok(result));
             }
-            catch (Exception ex)
+            catch (Exception ex)  // This is CEO Dashboard, not for others. ha ha ha!!!!
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return NotFound(ApiResponse<string>.Fail(ex.Message));
             }
         }
 
@@ -40,9 +40,9 @@ namespace NestInn.API.Controllers
                 var result = await _ceoService.GetEarningsSummaryAsync();
                 return Ok(ApiResponse<EarningsSummaryDto>.Ok(result));
             }
-            catch (Exception ex)
+            catch (Exception ex)   // It's My Money, I'm rich.
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return Unauthorized(ApiResponse<string>.Fail(ex.Message));
             }
         }
 
@@ -54,12 +54,12 @@ namespace NestInn.API.Controllers
                 await _ceoService.WithdrawAsync(dto.Amount);
 
                 return Ok(ApiResponse<string>.Ok(
-                    $"₹{dto.Amount:N2} withdrawn successfully!"
+                    $"₹{dto.Amount:N2} withdrawn successfully Check Bank!!"   // Paisa direct Bank pe ayega.
                 ));
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return NotFound(ApiResponse<string>.Fail(ex.Message));
             }
         }
 
@@ -69,6 +69,7 @@ namespace NestInn.API.Controllers
             var users = await _ceoService.GetUsersAsync();
             return Ok(ApiResponse<object>.Ok(users));
         }
+
 
         [HttpGet("properties")]
         public async Task<IActionResult> GetProperties()

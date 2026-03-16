@@ -21,7 +21,6 @@ namespace NestInn.API.Models
 
         public DateTime? WithdrawnAt { get; set; }
 
-        // Navigation
         [ForeignKey("BookingId")]
         public Booking Booking { get; set; } = null!;
     }

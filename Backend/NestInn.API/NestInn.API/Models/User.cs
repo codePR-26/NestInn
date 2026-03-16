@@ -24,15 +24,13 @@ namespace NestInn.API.Models
         public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
-        public string Role { get; set; } = "Renter"; // Renter, Owner, CEO
+        public string Role { get; set; } = "Renter"; 
 
         public bool IsVerified { get; set; } = false;
 
         public string? ProfilePicture { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        // Navigation Properties
         public ICollection<Property> Properties { get; set; } = new List<Property>();
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();

@@ -1,0 +1,166 @@
+<div class="page-wrap">
+  <div class="page-hero">
+    <div class="container">
+      <h1>{{ editId ? 'Edit Property' : 'Add New Property' }}</h1>
+      <p>{{ editId ? 'Update your property details' : 'List your property and start earning' }}</p>
+    </div>
+  </div>
+
+  <div class="container form-container">
+    <form (ngSubmit)="submit()" class="prop-form">
+
+      <!-- BASIC INFO -->
+      <div class="form-section">
+        <div class="section-title">
+          <mat-icon>home</mat-icon>
+          <h3>Basic Information</h3>
+        </div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Property Title *</mat-label>
+          <input matInput [(ngModel)]="form.title" name="title" required placeholder="e.g. Cozy Beachfront Villa"/>
+          <mat-icon matPrefix>title</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Description</mat-label>
+          <textarea matInput [(ngModel)]="form.description" name="description" rows="4"
+            placeholder="Describe your property in detail..."></textarea>
+        </mat-form-field>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Property Type *</mat-label>
+            <mat-select [(ngModel)]="form.propertyType" name="propertyType" required>
+              <mat-option value="Villa">🏖 Villa</mat-option>
+              <mat-option value="Apartment">🏢 Apartment</mat-option>
+              <mat-option value="Cottage">🏡 Cottage</mat-option>
+              <mat-option value="Studio">🛋 Studio</mat-option>
+              <mat-option value="Hostel">🏨 Hostel</mat-option>
+              <mat-option value="House">🏠 House</mat-option>
+              <mat-option value="Resort">🌴 Resort</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Price per Night (₹) *</mat-label>
+            <input matInput type="number" [(ngModel)]="form.pricePerNight" name="pricePerNight" required min="1"/>
+            <mat-icon matPrefix>currency_rupee</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- LOCATION -->
+      <div class="form-section">
+        <div class="section-title">
+          <mat-icon>location_on</mat-icon>
+          <h3>Location</h3>
+        </div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Full Address / Location *</mat-label>
+          <input matInput [(ngModel)]="form.location" name="location" required
+            placeholder="e.g. Calangute Beach Road"/>
+          <mat-icon matPrefix>location_on</mat-icon>
+        </mat-form-field>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>City *</mat-label>
+            <input matInput [(ngModel)]="form.city" name="city" required placeholder="e.g. Goa"/>
+            <mat-icon matPrefix>location_city</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Nearest Transport</mat-label>
+            <input matInput [(ngModel)]="form.nearestTransport" name="nearestTransport"
+              placeholder="e.g. 2km from airport"/>
+            <mat-icon matPrefix>train</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- CHECK IN/OUT -->
+      <div class="form-section">
+        <div class="section-title">
+          <mat-icon>schedule</mat-icon>
+          <h3>Check-in / Check-out</h3>
+        </div>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Check-in Time *</mat-label>
+            <input matInput [(ngModel)]="form.checkInTime" name="checkInTime" required placeholder="e.g. 12:00 PM"/>
+            <mat-icon matPrefix>login</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Check-out Time *</mat-label>
+            <input matInput [(ngModel)]="form.checkOutTime" name="checkOutTime" required placeholder="e.g. 11:00 AM"/>
+            <mat-icon matPrefix>logout</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- AMENITIES & RULES -->
+      <div class="form-section">
+        <div class="section-title">
+          <mat-icon>star</mat-icon>
+          <h3>Amenities &amp; Rules</h3>
+        </div>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Amenities (comma-separated)</mat-label>
+          <input matInput [(ngModel)]="form.amenities" name="amenities"
+            placeholder="WiFi, AC, Pool, Parking, Kitchen, Garden"/>
+          <mat-icon matPrefix>star</mat-icon>
+          <mat-hint>Separate each amenity with a comma</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>House Rules</mat-label>
+          <textarea matInput [(ngModel)]="form.rules" name="rules" rows="3"
+            placeholder="No smoking indoors. No loud music after 10 PM..."></textarea>
+          <mat-icon matPrefix>rule</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- IMAGE UPLOAD (after creation) -->
+      @if(createdId){
+        <mat-divider></mat-divider>
+        <div class="form-section">
+          <div class="section-title">
+            <mat-icon>photo_camera</mat-icon>
+            <h3>Property Images</h3>
+          </div>
+          <p class="img-hint">Upload up to 5 images. The first image will be the cover photo.</p>
+          <div class="img-upload-row">
+            @for(i of [1,2,3,4,5]; track i){
+              <label class="img-slot" [class.has-img]="uploadedImgs[i]">
+                @if(uploadedImgs[i]){
+                  <img [src]="uploadedImgs[i]" [alt]="'Photo '+i"/>
+                  <div class="img-overlay"><mat-icon>edit</mat-icon></div>
+                } @else {
+                  <mat-icon>add_photo_alternate</mat-icon>
+                  <span>Photo {{ i }}</span>
+                }
+                <input type="file" accept="image/*" (change)="uploadImg($event, i)" style="display:none"/>
+              </label>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ACTIONS -->
+      <div class="form-actions">
+        <a mat-stroked-button routerLink="/owner/properties" style="border-radius:8px;border-color:var(--border)">
+          <mat-icon>close</mat-icon> Cancel
+        </a>
+        <button mat-flat-button type="submit" class="btn-teal submit-btn" [disabled]="loading">
+          @if(loading){
+            <mat-spinner diameter="18"></mat-spinner>
+          } @else {
+            <mat-icon>{{ editId ? 'save' : 'add_home' }}</mat-icon>
+            {{ editId ? 'Save Changes' : 'Create Property' }}
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

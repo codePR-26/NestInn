@@ -1,0 +1,101 @@
+<div class="ceo-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>CEO Dashboard</h1>
+      <p>Platform overview and earnings management</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading dashboard...</p>
+    </div>
+  } @else {
+  <div class="dashboard-content">
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🏠</div>
+        <div class="stat-info">
+          <div class="stat-value">{{dashboard?.totalProperties || 0}}</div>
+          <div class="stat-label">Total Properties</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <div class="stat-value">{{dashboard?.totalUsers || 0}}</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <div class="stat-value">{{dashboard?.totalBookings || 0}}</div>
+          <div class="stat-label">Total Bookings</div>
+        </div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <div class="stat-value">₹{{dashboard?.totalEarnings || 0}}</div>
+          <div class="stat-label">Total Earnings</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Earnings Section -->
+    <div class="earnings-section">
+      <div class="earnings-card">
+        <h2>Platform Earnings</h2>
+        <div class="earnings-grid">
+          <div class="earning-item">
+            <span class="earning-label">Today</span>
+            <span class="earning-value">₹{{earnings?.today || 0}}</span>
+          </div>
+          <div class="earning-item">
+            <span class="earning-label">This Week</span>
+            <span class="earning-value">₹{{earnings?.weekly || 0}}</span>
+          </div>
+          <div class="earning-item">
+            <span class="earning-label">This Month</span>
+            <span class="earning-value">₹{{earnings?.monthly || 0}}</span>
+          </div>
+          <div class="earning-item">
+            <span class="earning-label">This Year</span>
+            <span class="earning-value">₹{{earnings?.annual || 0}}</span>
+          </div>
+        </div>
+        <div class="withdrawal-section">
+          <div class="withdrawal-info">
+            <span>Pending Withdrawal</span>
+            <strong>₹{{dashboard?.pendingWithdrawal || 0}}</strong>
+          </div>
+          <button class="withdraw-btn" (click)="withdraw()">
+            💸 Withdraw Funds
+          </button>
+        </div>
+      </div>
+
+      <!-- Monthly Chart -->
+      <div class="chart-card">
+        <h2>Monthly Earnings</h2>
+        <div class="chart-bars">
+          @for (month of dashboard?.monthlyChart || []; track month.month) {
+            <div class="chart-bar-wrapper">
+              <div class="chart-bar"
+                [style.height.%]="month.amount > 0 ? (month.amount / 10000 * 100) : 5">
+              </div>
+              <span class="chart-label">{{month.month}}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+  </div>
+  }
+</div>

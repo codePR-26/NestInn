@@ -26,6 +26,7 @@ namespace NestInn.API.Controllers
             _cloudinary = cloudinary;
         }
 
+        
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -36,10 +37,15 @@ namespace NestInn.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return ex switch
+                {
+                    KeyNotFoundException => NotFound(ApiResponse<string>.Fail(ex.Message)),
+                    _ => StatusCode(500, ApiResponse<string>.Fail("Something went wrong."))
+                };
             }
         }
 
+        
         [HttpGet("top-rated")]
         public async Task<IActionResult> GetTopRated()
         {
@@ -48,12 +54,17 @@ namespace NestInn.API.Controllers
                 var result = await _propertyService.GetTopRatedPropertiesAsync();
                 return Ok(ApiResponse<List<PropertyResponseDto>>.Ok(result));
             }
+            catch (Exception ex) when (ex is KeyNotFoundException)
+            {
+                return NotFound(ApiResponse<string>.Fail(ex.Message));
+            }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return StatusCode(500, ApiResponse<string>.Fail("Something went wrong."));
             }
         }
 
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -64,12 +75,17 @@ namespace NestInn.API.Controllers
                     return NotFound(ApiResponse<string>.Fail("Property not found."));
                 return Ok(ApiResponse<PropertyResponseDto>.Ok(result));
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ApiResponse<string>.Fail(ex.Message));
+            }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return StatusCode(500, ApiResponse<string>.Fail("Something went wrong."));
             }
         }
 
+       
         [HttpPost("search")]
         public async Task<IActionResult> Search([FromBody] PropertySearchDto dto)
         {
@@ -80,10 +96,16 @@ namespace NestInn.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return ex switch
+                {
+                    ArgumentException => BadRequest(ApiResponse<string>.Fail(ex.Message)),
+                    KeyNotFoundException => NotFound(ApiResponse<string>.Fail(ex.Message)),
+                    _ => StatusCode(500, ApiResponse<string>.Fail("Search failed."))
+                };
             }
         }
 
+        
         [HttpGet("my-properties")]
         [Authorize(Roles = "Owner")]
         public async Task<IActionResult> GetMyProperties()
@@ -94,12 +116,21 @@ namespace NestInn.API.Controllers
                 var result = await _propertyService.GetOwnerPropertiesAsync(ownerId);
                 return Ok(ApiResponse<List<PropertyResponseDto>>.Ok(result));
             }
+            catch (Exception ex) when (ex is UnauthorizedAccessException)
+            {
+                return Unauthorized(ApiResponse<string>.Fail(ex.Message));
+            }
+            catch (Exception ex) when (ex is KeyNotFoundException)
+            {
+                return NotFound(ApiResponse<string>.Fail(ex.Message));
+            }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return StatusCode(500, ApiResponse<string>.Fail("Something went wrong."));
             }
         }
 
+        
         [HttpPost]
         [Authorize(Roles = "Owner")]
         public async Task<IActionResult> Create([FromBody] CreatePropertyDto dto)
@@ -111,12 +142,21 @@ namespace NestInn.API.Controllers
                 return Ok(ApiResponse<PropertyResponseDto>.Ok(result,
                     "Property created successfully!"));
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ApiResponse<string>.Fail(ex.Message));
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ApiResponse<string>.Fail(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<string>.Fail("Something went wrong."));
+            }
         }
 
+        
         [HttpPut("{id}")]
         [Authorize(Roles = "Owner")]
         public async Task<IActionResult> Update(int id, [FromBody] CreatePropertyDto dto)
@@ -130,10 +170,11 @@ namespace NestInn.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return HandleUpdateException(ex);
             }
         }
 
+        
         [HttpDelete("{id}")]
         [Authorize(Roles = "Owner")]
         public async Task<IActionResult> Delete(int id)
@@ -146,14 +187,22 @@ namespace NestInn.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                var errorMap = new Dictionary<Type, IActionResult>
+                {
+                    { typeof(KeyNotFoundException), NotFound(ApiResponse<string>.Fail(ex.Message)) },
+                    { typeof(UnauthorizedAccessException), Unauthorized(ApiResponse<string>.Fail(ex.Message)) }
+                };
+                return errorMap.TryGetValue(ex.GetType(), out var result)
+                    ? result
+                    : StatusCode(500, ApiResponse<string>.Fail("Something went wrong."));
             }
         }
 
+       
         [HttpPost("{id}/images")]
         [Authorize(Roles = "Owner")]
         public async Task<IActionResult> UploadImage(
-    int id, IFormFile file, [FromQuery] int order = 1)
+            int id, IFormFile file, [FromQuery] int order = 1)
         {
             try
             {
@@ -174,15 +223,32 @@ namespace NestInn.API.Controllers
                     return BadRequest(ApiResponse<string>.Fail("Image upload failed."));
 
                 var imageUrl = uploadResult.SecureUrl.ToString();
-
                 await _propertyService.AddPropertyImageAsync(id, imageUrl, order);
-
                 return Ok(ApiResponse<string>.Ok(imageUrl, "Image uploaded successfully!"));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ApiResponse<string>.Fail(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return UnprocessableEntity(ApiResponse<string>.Fail(ex.Message));
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return StatusCode(500, ApiResponse<string>.Fail("Image upload failed."));
             }
+        }
+
+        private IActionResult HandleUpdateException(Exception ex)
+        {
+            return ex switch
+            {
+                KeyNotFoundException => NotFound(ApiResponse<string>.Fail(ex.Message)),
+                UnauthorizedAccessException => Unauthorized(ApiResponse<string>.Fail(ex.Message)),
+                ArgumentException => BadRequest(ApiResponse<string>.Fail(ex.Message)),
+                _ => StatusCode(500, ApiResponse<string>.Fail("Update failed."))
+            };
         }
     }
 }

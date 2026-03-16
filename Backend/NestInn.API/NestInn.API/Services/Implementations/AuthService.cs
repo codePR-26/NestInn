@@ -24,21 +24,21 @@ namespace NestInn.API.Services.Implementations
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
-            // Check if email exists
+            
             var existingUser = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == dto.Email);
 
             if (existingUser != null)
                 throw new Exception("Email already registered.");
 
-            // CEO cannot register
+            
             if (dto.Role == "CEO")
                 throw new Exception("Invalid role.");
 
-            // Hash password
+            
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-            // Create user
+            
             var user = new User
             {
                 FullName = dto.FullName,
@@ -53,7 +53,6 @@ namespace NestInn.API.Services.Implementations
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Generate and send OTP
             await GenerateAndSendOtpAsync(user);
 
             return new AuthResponseDto
@@ -100,7 +99,7 @@ namespace NestInn.API.Services.Implementations
                 throw new Exception($"Invalid OTP. {3 - otpRecord.Attempts} attempts remaining.");
             }
 
-            // Mark OTP as used
+            
             otpRecord.IsUsed = true;
             user.IsVerified = true;
             await _context.SaveChangesAsync();
@@ -146,7 +145,7 @@ namespace NestInn.API.Services.Implementations
             if (user.IsVerified)
                 throw new Exception("Account already verified.");
 
-            // Invalidate old OTPs
+            
             var oldOtps = await _context.OTPVerifications
                 .Where(o => o.UserId == user.UserId && !o.IsUsed)
                 .ToListAsync();
@@ -156,7 +155,7 @@ namespace NestInn.API.Services.Implementations
 
             await _context.SaveChangesAsync();
 
-            // Generate new OTP
+            
             await GenerateAndSendOtpAsync(user);
 
             return "New OTP sent to your email.";
@@ -179,7 +178,7 @@ namespace NestInn.API.Services.Implementations
             _context.OTPVerifications.Add(otpRecord);
             await _context.SaveChangesAsync();
 
-            // Send OTP email
+           
             await SendOtpEmailAsync(user.Email, user.FullName, otpCode);
         }
 

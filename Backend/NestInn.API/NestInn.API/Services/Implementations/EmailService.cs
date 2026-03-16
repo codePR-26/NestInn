@@ -120,9 +120,9 @@ namespace NestInn.API.Services.Implementations
             };
 
             bodyBuilder.Attachments.Add(
-                $"NestInn_Invoice_{bookingId}.html",
+                $"NestInn_Invoice_{bookingId}.pdf",
                 invoicePdf,
-                ContentType.Parse("text/html"));
+                ContentType.Parse("application/pdf"));
 
             message.Body = bodyBuilder.ToMessageBody();
 

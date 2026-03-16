@@ -25,8 +25,8 @@ namespace NestInn.API.Controllers
             {
                 var result = await _authService.RegisterAsync(dto);
                 return Ok(ApiResponse<AuthResponseDto>.Ok(result,
-                    "Registration successful! Check your email for OTP."));
-            }
+                    "Registration Successful! You can now check the Gmail for OTP."));
+            }      // this is informing the user to check the mail brooo!            
             catch (Exception ex)
             {
                 return BadRequest(ApiResponse<string>.Fail(ex.Message));
@@ -39,7 +39,7 @@ namespace NestInn.API.Controllers
             try
             {
                 var result = await _authService.VerifyOtpAsync(dto);
-                return Ok(ApiResponse<string>.Ok(result, "Email verified successfully!"));
+                return Ok(ApiResponse<string>.Ok(result, "Email Successfully verified "));   // Brooo the user verify successfully.
             }
             catch (Exception ex)
             {
@@ -68,17 +68,17 @@ namespace NestInn.API.Controllers
             {
                 var result = await _authService.LoginAsync(dto);
 
-                // Set JWT in HTTP-only cookie
+               
                 Response.Cookies.Append("nestinn_token", result.Message, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = false, // true in production
+                    Secure = false, 
                     SameSite = SameSiteMode.Lax,
                     Expires = DateTimeOffset.UtcNow.AddDays(7)
                 });
 
-                result.Message = "Login successful!";
-                return Ok(ApiResponse<AuthResponseDto>.Ok(result, "Login successful!"));
+                result.Message = "Login Successful!";
+                return Ok(ApiResponse<AuthResponseDto>.Ok(result, "Login Successful!"));
             }
             catch (Exception ex)
             {
@@ -90,7 +90,7 @@ namespace NestInn.API.Controllers
         public IActionResult Logout()
         {
             Response.Cookies.Delete("nestinn_token");
-            return Ok(ApiResponse<string>.Ok("Logged out successfully."));
+            return Ok(ApiResponse<string>.Ok("Logged out successful."));
         }
 
         [HttpGet("me")]

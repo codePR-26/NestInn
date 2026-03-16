@@ -24,7 +24,7 @@ namespace NestInn.API.Models
 
         public bool IsRead { get; set; } = false;
 
-        // Navigation
+     
         [ForeignKey("BookingId")]
         public Booking Booking { get; set; } = null!;
 

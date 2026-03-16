@@ -23,7 +23,7 @@ namespace NestInn.API.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation
+       
         [ForeignKey("UserId")]
         public User User { get; set; } = null!;
     }

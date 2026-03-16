@@ -18,7 +18,7 @@ namespace NestInn.API.Services.Implementations
         public async Task<MessageResponseDto> SendMessageAsync(
             SendMessageDto dto, int senderId)
         {
-            // Check booking exists and payment is successful
+            
             var booking = await _context.Bookings
                 .FirstOrDefaultAsync(b =>
                     b.BookingId == dto.BookingId &&
@@ -26,7 +26,7 @@ namespace NestInn.API.Services.Implementations
                 ?? throw new Exception(
                     "Chat is only available after successful payment.");
 
-            // Verify sender is part of this booking
+            
             var property = await _context.Properties
                 .FirstOrDefaultAsync(p => p.PropertyId == booking.PropertyId)
                 ?? throw new Exception("Property not found.");

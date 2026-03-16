@@ -28,7 +28,7 @@ namespace NestInn.API.Controllers
                 var senderId = _jwtHelper.GetUserIdFromToken(User)!.Value;
                 var result = await _messageService.SendMessageAsync(dto, senderId);
                 return Ok(ApiResponse<MessageResponseDto>.Ok(result,
-                    "Message sent successfully!"));
+                    "Message sent successfully!"));  // Chat pe baat karte hai.
             }
             catch (Exception ex)
             {
@@ -48,7 +48,7 @@ namespace NestInn.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return NotFound(ApiResponse<string>.Fail(ex.Message));
             }
         }
 
@@ -59,11 +59,11 @@ namespace NestInn.API.Controllers
             {
                 var userId = _jwtHelper.GetUserIdFromToken(User)!.Value;
                 await _messageService.MarkAsReadAsync(messageId, userId);
-                return Ok(ApiResponse<string>.Ok("Message marked as read."));
+                return Ok(ApiResponse<string>.Ok("Message checked.")); // Seen ho geya!!!!
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return Unauthorized(ApiResponse<string>.Fail(ex.Message));
             }
         }
     }

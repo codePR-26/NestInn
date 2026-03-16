@@ -28,7 +28,7 @@ namespace NestInn.API.Controllers
                 var userId = _jwtHelper.GetUserIdFromToken(User)!.Value;
                 var result = await _bookingService.CreateBookingAsync(dto, userId);
                 return Ok(ApiResponse<BookingResponseDto>.Ok(result,
-                    "Booking created successfully!"));
+                    "Booking created successfully!"));   // Broo book ho gaya.
             }
             catch (Exception ex)
             {
@@ -44,11 +44,11 @@ namespace NestInn.API.Controllers
             {
                 var userId = _jwtHelper.GetUserIdFromToken(User)!.Value;
                 var result = await _bookingService.GetUserBookingsAsync(userId);
-                return Ok(ApiResponse<List<BookingResponseDto>>.Ok(result));
+                return Ok(ApiResponse<List<BookingResponseDto>>.Ok(result));  // I can see my oWN bookings .
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return Unauthorized(ApiResponse<string>.Fail(ex.Message));
             }
         }
 
@@ -62,9 +62,9 @@ namespace NestInn.API.Controllers
                 var result = await _bookingService.GetOwnerBookingsAsync(ownerId);
                 return Ok(ApiResponse<List<BookingResponseDto>>.Ok(result));
             }
-            catch (Exception ex)
+            catch (Exception ex)    // Bro it's owner properties ki bookings dekh ne ke liye.
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return NotFound(ApiResponse<string>.Fail(ex.Message));
             }
         }
 
@@ -76,7 +76,7 @@ namespace NestInn.API.Controllers
             {
                 var result = await _bookingService.GetBookingByIdAsync(id);
                 if (result == null)
-                    return NotFound(ApiResponse<string>.Fail("Booking not found."));
+                    return NotFound(ApiResponse<string>.Fail(" I'm So Sorry!! Booking not found."));
                 return Ok(ApiResponse<BookingResponseDto>.Ok(result));
             }
             catch (Exception ex)
@@ -93,11 +93,11 @@ namespace NestInn.API.Controllers
             {
                 var ownerId = _jwtHelper.GetUserIdFromToken(User)!.Value;
                 await _bookingService.ConfirmBookingAsync(id, ownerId);
-                return Ok(ApiResponse<string>.Ok("Booking confirmed successfully!"));
+                return Ok(ApiResponse<string>.Ok("Booking confirmed successfully!")); // Maja aa gaya!!!!!!!!!!!!
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return Unauthorized(ApiResponse<string>.Fail(ex.Message));
             }
         }
 
@@ -109,11 +109,11 @@ namespace NestInn.API.Controllers
             {
                 var ownerId = _jwtHelper.GetUserIdFromToken(User)!.Value;
                 await _bookingService.DeclineBookingAsync(id, ownerId);
-                return Ok(ApiResponse<string>.Ok("Booking declined."));
+                return Ok(ApiResponse<string>.Ok(" Feel bad Your Booking declined."));
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return Unauthorized(ApiResponse<string>.Fail(ex.Message));
             }
         }
 
@@ -127,8 +127,9 @@ namespace NestInn.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<string>.Fail(ex.Message));
+                return NotFound(ApiResponse<string>.Fail(ex.Message));
             }
+
         }
     }
 }

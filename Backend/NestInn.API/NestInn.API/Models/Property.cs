@@ -19,7 +19,7 @@ namespace NestInn.API.Models
         public string Description { get; set; } = string.Empty;
 
         [Required]
-        public string PropertyType { get; set; } = string.Empty; // Flat, Villa, Apartment, Cottage, Studio
+        public string PropertyType { get; set; } = string.Empty;
 
         [Required]
         public string Location { get; set; } = string.Empty;
@@ -51,7 +51,6 @@ namespace NestInn.API.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation
         [ForeignKey("OwnerId")]
         public User Owner { get; set; } = null!;
 

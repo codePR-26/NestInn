@@ -122,14 +122,14 @@ namespace NestInn.API.Services.Implementations
 
                 if (earning.Amount <= remaining)
                 {
-                    // withdraw full earning
+                    
                     earning.IsWithdrawn = true;
                     earning.WithdrawnAt = DateTime.UtcNow;
                     remaining -= earning.Amount;
                 }
                 else
                 {
-                    // partial withdraw from this earning
+                    
                     earning.Amount -= remaining;
                     remaining = 0;
                 }

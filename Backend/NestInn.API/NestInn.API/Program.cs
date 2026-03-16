@@ -4,15 +4,18 @@ using Microsoft.IdentityModel.Tokens;
 using NestInn.API.Data;
 using System.Text;
 using CloudinaryDotNet;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ─── DATABASE ───────────────────────────────────────────
+QuestPDF.Settings.License = LicenseType.Community;
+
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration
     .GetConnectionString("DefaultConnection")));
 
-// ─── JWT AUTHENTICATION ──────────────────────────────────
+
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"]!;
 
@@ -35,7 +38,7 @@ builder.Services.AddAuthentication(options =>
             Encoding.UTF8.GetBytes(secretKey))
     };
 
-    // Read JWT from HTTP-only cookie
+   
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
@@ -48,19 +51,20 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// ─── CORS ────────────────────────────────────────────────
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("NestInnPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(
+            "http://localhost:4200",
+            "http://localhost:4201")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
     });
 });
 
-// ─── CLOUDINARY CONFIGURATION ────────────────────────────
 var cloudName = builder.Configuration["Cloudinary:CloudName"];
 var apiKey = builder.Configuration["Cloudinary:ApiKey"];
 var apiSecret = builder.Configuration["Cloudinary:ApiSecret"];
@@ -77,13 +81,13 @@ var cloudinary = new Cloudinary(account);
 
 builder.Services.AddSingleton(cloudinary);
 
-// ─── SIGNALR ─────────────────────────────────────────────
+
 builder.Services.AddSignalR();
 
-// ─── CONTROLLERS ─────────────────────────────────────────
+
 builder.Services.AddControllers();
 
-// ─── SERVICES ────────────────────────────────────────────
+
 builder.Services.AddScoped<NestInn.API.Services.Interfaces.IAuthService,
     NestInn.API.Services.Implementations.AuthService>();
 
@@ -107,15 +111,15 @@ builder.Services.AddScoped<NestInn.API.Services.Interfaces.ICeoService,
 
 builder.Services.AddScoped<NestInn.API.Helpers.JwtHelper>();
 
-// ─── OPENAPI ─────────────────────────────────────────────
+
 builder.Services.AddOpenApi();
 
-// ─── STATIC FILES ────────────────────────────────────────
+
 builder.Services.AddDirectoryBrowser();
 
 var app = builder.Build();
 
-// ─── MIDDLEWARE ──────────────────────────────────────────
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -128,6 +132,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// app.MapHub<ChatHub>("/hubs/chat"); // enable later if needed
+
 
 app.Run();

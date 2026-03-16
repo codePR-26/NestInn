@@ -26,7 +26,7 @@ namespace NestInn.API.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation
+       
         [ForeignKey("BookingId")]
         public Booking Booking { get; set; } = null!;
 

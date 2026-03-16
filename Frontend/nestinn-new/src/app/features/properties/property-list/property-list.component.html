@@ -1,0 +1,112 @@
+<div class="page-hero">
+  <div class="container">
+    <h1>Explore Properties</h1>
+    <p>{{ properties().length }} properties available across India</p>
+  </div>
+</div>
+
+<div class="container list-layout">
+  <!-- SIDEBAR FILTERS -->
+  <aside class="filters-panel">
+    <div class="filter-top">
+      <h3>Filters</h3>
+      <button mat-button (click)="reset()" style="color:var(--teal)">Reset</button>
+    </div>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>City / Location</mat-label>
+      <input matInput [(ngModel)]="filters.city" placeholder="Mumbai, Goa..."/>
+      <mat-icon matPrefix>location_on</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Property Type</mat-label>
+      <mat-select [(ngModel)]="filters.propertyType">
+        <mat-option value="">All Types</mat-option>
+        <mat-option value="Villa">Villa</mat-option>
+        <mat-option value="Apartment">Apartment</mat-option>
+        <mat-option value="Cottage">Cottage</mat-option>
+        <mat-option value="Studio">Studio</mat-option>
+        <mat-option value="Hostel">Hostel</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Check In</mat-label>
+      <input matInput type="date" [(ngModel)]="filters.checkIn"/>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Check Out</mat-label>
+      <input matInput type="date" [(ngModel)]="filters.checkOut"/>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Min Price (₹)</mat-label>
+      <input matInput type="number" [(ngModel)]="filters.minPrice" placeholder="0"/>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Max Price (₹)</mat-label>
+      <input matInput type="number" [(ngModel)]="filters.maxPrice" placeholder="50000"/>
+    </mat-form-field>
+
+    <button mat-flat-button class="btn-teal apply-btn" (click)="load()">
+      <mat-icon>search</mat-icon> Apply Filters
+    </button>
+  </aside>
+
+  <!-- RESULTS -->
+  <main class="results-area">
+    <div class="results-header">
+      <span class="results-count">{{ properties().length }} properties found</span>
+      <mat-form-field appearance="outline" class="sort-field">
+        <mat-label>Sort by</mat-label>
+        <mat-select [(ngModel)]="sortBy" (ngModelChange)="sortProps()">
+          <mat-option value="rating">Top Rated</mat-option>
+          <mat-option value="price-asc">Price: Low to High</mat-option>
+          <mat-option value="price-desc">Price: High to Low</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if(loading()) {
+      <div class="ni-spinner"><mat-spinner diameter="48"></mat-spinner></div>
+    } @else if(properties().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>No properties found</h3>
+        <p>Try adjusting your filters</p>
+        <button mat-stroked-button (click)="reset()" class="btn-outline-teal">Clear Filters</button>
+      </div>
+    } @else {
+      <div class="nf-results-grid">
+        @for(p of properties(); track p.propertyId) {
+          <div class="nf-card" (click)="go(p.propertyId)">
+            <div class="nf-card-img">
+              <img [src]="getImg(p)" [alt]="p.title" loading="lazy"/>
+              <div class="nf-card-overlay"></div>
+              <div class="nf-card-type">{{ p.propertyType }}</div>
+              @if(!p.isAvailable){<div class="unavail-badge">Unavailable</div>}
+            </div>
+            <div class="nf-card-body">
+              <div class="nf-card-city">📍 {{ p.location }}, {{ p.city }}</div>
+              <div class="nf-card-title">{{ p.title }}</div>
+              @if(p.amenities) {
+                <div class="amenities-preview">
+                  @for(a of p.amenities.split(',').slice(0,3); track a) {
+                    <span class="am-chip">{{ a.trim() }}</span>
+                  }
+                </div>
+              }
+              <div class="nf-card-footer">
+                <span class="nf-price">₹{{ p.pricePerNight | number }}<small>/night</small></span>
+                @if(p.rating > 0){<span class="nf-rating">★ {{ p.rating | number:'1.1-1' }}</span>}
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>

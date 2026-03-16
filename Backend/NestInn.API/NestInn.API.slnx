@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="NestInn.API/NestInn.API.csproj" />
+  <Project Path="NestInn.Tests/NestInn.Tests.csproj" Id="9169e3f1-ab34-4f41-ae48-78e48a323366" />
 </Solution>
