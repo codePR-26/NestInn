@@ -191,7 +191,7 @@ interface Message {
   `]
 })
 export class ChatbotComponent {
-private readonly API_KEY = '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';
+private readonly API_KEY = '';
 private readonly API_URL = 'https://api.groq.com/openai/v1/chat/completions';
   open = false;
   input = '';
