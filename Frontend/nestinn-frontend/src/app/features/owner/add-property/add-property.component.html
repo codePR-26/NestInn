@@ -57,6 +57,8 @@
       </div>
     </div>
 
-    <button type="submit" class="btn btn-primary btn-lg" [disabled]="loading">{{ loading ? 'Listing...' : '🏠 List Property' }}</button>
+    <button type="submit" class="btn btn-primary btn-lg" [disabled]="loading">
+  {{ loading ? (editId ? 'Updating...' : 'Listing...') : (editId ? '✏️ Update Property' : '🏠 List Property') }}
+</button>
   </form>
 </div>

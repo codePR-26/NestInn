@@ -21,9 +21,10 @@
               @if(p.rating > 0){ <span>⭐ {{ p.rating | number:'1.1-1' }}</span> }
             </div>
             <div class="pmc-actions">
-              <a [routerLink]="['/properties', p.propertyId]" class="btn btn-outline btn-sm">View</a>
-              <button class="btn btn-danger btn-sm" (click)="delete(p.propertyId)">Delete</button>
-            </div>
+  <a [routerLink]="['/properties', p.propertyId]" class="btn btn-outline btn-sm">View</a>
+  <button class="btn btn-secondary btn-sm" (click)="goEdit(p.propertyId)">Edit</button>
+  <button class="btn btn-danger btn-sm" (click)="delete(p.propertyId)">Delete</button>
+</div>
           </div>
         </div>
       }

@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { PropertyService } from '../../../core/services/property.service';
 import { ToastService } from '../../../core/services/toast.service';
 
@@ -12,12 +12,14 @@ import { ToastService } from '../../../core/services/toast.service';
   templateUrl: './add-property.component.html', 
   styleUrls: ['./add-property.component.scss'] 
 })
-export class AddPropertyComponent {
+export class AddPropertyComponent implements OnInit {
   propSvc = inject(PropertyService); 
   toast = inject(ToastService); 
   router = inject(Router);
+  route = inject(ActivatedRoute);
   loading = false; 
   selectedFiles: File[] = [];
+  editId: number | null = null;
   
   form = { 
     title: '', description: '', propertyType: 'Apartment', 
@@ -29,6 +31,42 @@ export class AddPropertyComponent {
   types = ['Apartment', 'Villa', 'House', 'Resort', 'Cottage', 'Penthouse', 'Studio'];
   amenityOptions = ['WiFi', 'AC', 'Pool', 'Parking', 'Kitchen', 'Garden', 'Beach Access', 'Gym', 'TV', 'Washer'];
   selectedAmenities: string[] = [];
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.editId = +id;
+      this.loadProperty(this.editId);
+    }
+  }
+
+  loadProperty(id: number) {
+    this.loading = true;
+    this.propSvc.getById(id).subscribe({
+      next: (res: any) => {
+        const p = res.data || res;
+        this.form.title = p.title;
+        this.form.description = p.description;
+        this.form.propertyType = p.propertyType;
+        this.form.location = p.location;
+        this.form.city = p.city;
+        this.form.pricePerNight = p.pricePerNight;
+        this.form.checkInTime = p.checkInTime;
+        this.form.checkOutTime = p.checkOutTime;
+        this.form.nearestTransport = p.nearestTransport || '';
+        this.form.rules = p.rules || '';
+        this.form.isAvailable = p.isAvailable;
+        this.selectedAmenities = p.amenities 
+          ? p.amenities.split(',').map((a: string) => a.trim()).filter(Boolean)
+          : [];
+        this.loading = false;
+      },
+      error: () => {
+        this.toast.error('Failed to load property');
+        this.loading = false;
+      }
+    });
+  }
 
   toggleAmenity(a: string) { 
     this.selectedAmenities = this.selectedAmenities.includes(a) 
@@ -59,34 +97,41 @@ export class AddPropertyComponent {
       amenities: this.selectedAmenities.join(', '),
       nearestTransport: this.form.nearestTransport,
       rules: this.form.rules,
-      isAvailable: true
+      isAvailable: this.form.isAvailable
     };
 
-    this.propSvc.create(propertyData).subscribe({
-      next: (res: any) => { 
-        this.toast.success('Property listed successfully!'); 
-        if (this.selectedFiles.length > 0 && res.data?.propertyId) {
-
-  this.selectedFiles.forEach((file: File) => {
-
-    const fd = new FormData();
-    fd.append("file", file);   // IMPORTANT
-
-    this.propSvc.uploadImages(res.data.propertyId, fd)
-      .subscribe({
-        next: () => console.log("Image uploaded"),
-        error: err => console.error(err)
+    if (this.editId) {
+      this.propSvc.update(this.editId, propertyData).subscribe({
+        next: () => { 
+          this.toast.success('Property updated successfully!'); 
+          this.router.navigate(['/owner/properties']); 
+        },
+        error: (e: any) => { 
+          this.toast.error(e.error?.message || 'Failed to update property'); 
+          this.loading = false; 
+        }
       });
-
-  });
-
-}
-        this.router.navigate(['/owner/properties']); 
-      },
-      error: (e: any) => { 
-        this.toast.error(e.error?.message || 'Failed to create property'); 
-        this.loading = false; 
-      }
-    });
+    } else {
+      this.propSvc.create(propertyData).subscribe({
+        next: (res: any) => { 
+          this.toast.success('Property listed successfully!'); 
+          if (this.selectedFiles.length > 0 && res.data?.propertyId) {
+            this.selectedFiles.forEach((file: File) => {
+              const fd = new FormData();
+              fd.append("file", file);
+              this.propSvc.uploadImages(res.data.propertyId, fd).subscribe({
+                next: () => console.log("Image uploaded"),
+                error: err => console.error(err)
+              });
+            });
+          }
+          this.router.navigate(['/owner/properties']); 
+        },
+        error: (e: any) => { 
+          this.toast.error(e.error?.message || 'Failed to create property'); 
+          this.loading = false; 
+        }
+      });
+    }
   }
 }

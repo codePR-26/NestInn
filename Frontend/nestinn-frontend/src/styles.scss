@@ -76,7 +76,9 @@ input, textarea, select { font-family: inherit; outline: none; }
 .btn-gold { background: var(--gold); color: white; box-shadow: 0 4px 14px rgba(240,165,0,0.3); }
 .btn-gold:hover { background: #d4940a; transform: translateY(-1px); }
 .btn-danger { background: var(--red); color: white; }
-.btn-danger:hover { background: #c0392b; }
+//.btn-danger:hover { background: #c0392b; }
+.btn-secondary { background: var(--teal-500); color: white; }
+.btn-secondary:hover { background: var(--teal-400); transform: translateY(-1px); }
 .btn-sm { padding: 8px 16px !important; font-size: 0.8rem !important; }
 .btn-lg { padding: 15px 32px !important; font-size: 1rem !important; }
 .btn-full { width: 100%; justify-content: center; }

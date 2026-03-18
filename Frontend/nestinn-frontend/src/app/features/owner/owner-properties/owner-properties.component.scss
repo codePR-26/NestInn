@@ -6,3 +6,13 @@
 .pmc-status { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 0.82rem; color: var(--text-muted); }
 .pmc-actions { display: flex; gap: 8px; }
 @media(max-width:768px){ .props-grid { grid-template-columns: 1fr; } }
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--teal-600);
+  color: var(--teal-600);
+  &:hover {
+    background: var(--teal-600);
+    color: #fff;
+  }
+}
