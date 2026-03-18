@@ -13,6 +13,12 @@ export const routes: Routes = [
   { path: 'owner/dashboard', loadComponent: () => import('./features/owner/owner-dashboard/owner-dashboard.component').then(m => m.OwnerDashboardComponent), canActivate: [ownerGuard] },
   { path: 'owner/properties', loadComponent: () => import('./features/owner/owner-properties/owner-properties.component').then(m => m.OwnerPropertiesComponent), canActivate: [ownerGuard] },
   { path: 'owner/add-property', loadComponent: () => import('./features/owner/add-property/add-property.component').then(m => m.AddPropertyComponent), canActivate: [ownerGuard] },
+  { 
+  path: 'owner/edit-property/:id', 
+  loadComponent: () => import('./features/owner/add-property/add-property.component')
+    .then(m => m.AddPropertyComponent), 
+  canActivate: [ownerGuard] 
+},
   { path: 'ceo/dashboard', loadComponent: () => import('./features/ceo/ceo-dashboard/ceo-dashboard.component').then(m => m.CeoDashboardComponent), canActivate: [ceoGuard] },
   { path: 'chat/:bookingId', loadComponent: () => import('./features/chat/chat.component').then(m => m.ChatComponent), canActivate: [authGuard] },
   { path: 'profile', loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent), canActivate: [authGuard] },
