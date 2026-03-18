@@ -22,7 +22,8 @@ The project demonstrates a **modern enterprise-style architecture using Angular 
 * Messaging system between users and property owners
 * Email OTP verification
 * Payment processing module
-* Modular REST API design
+* AI-powered chatbot assistant (Frontend-based)
+* Cloudinary-based image upload system
 
 ---
 
@@ -90,18 +91,84 @@ SQL Server Database
 
 ---
 
-# 📊 System Flowchart
+# ☁️ Cloudinary Image Upload Flow
 
-Click to open the interactive system flowchart.
+```
+User uploads image (Angular Frontend)
+        │
+        ▼
+Image sent via HTTP request
+        │
+        ▼
+ASP.NET Core Backend API
+        │
+        ▼
+Cloudinary SDK uploads image
+        │
+        ▼
+Image stored in Cloudinary CDN
+        │
+        ▼
+Image URL returned to backend
+        │
+        ▼
+Stored in SQL Server database
+        │
+        ▼
+Frontend displays image using URL
+```
+
+### 🔹 How it Works
+
+* Images are stored in **Cloudinary cloud**
+* Only image URL is saved in database
+* Faster loading using CDN
+* No local storage required
+
+---
+
+# 🤖 Chatbot Working Flow (Frontend-Based)
+
+```
+User enters message (Angular UI)
+        │
+        ▼
+Frontend sends request directly to Groq API
+        │
+        ▼
+Groq AI processes the request
+        │
+        ▼
+Response returned to Frontend
+        │
+        ▼
+Chatbot displays response
+```
+
+### 🔹 Key Points
+
+* Chatbot runs **fully in frontend**
+* Uses **Groq API (LLM)**
+* No backend integration for chatbot
+* Provides:
+
+  * Property assistance
+  * Booking help
+  * General queries
+
+---
+
+# 📊 System Flowchart
 
 👉 https://codepr-26.github.io/NestInn/docs/nestinn_flowchart.html
 
+---
 
 # 🗄 Database ER Diagram
 
-Click to open the database ER diagram.
-
 👉 https://codepr-26.github.io/NestInn/docs/NestInn_ER_Diagram.html
+
+---
 
 # 📂 Project Structure
 
@@ -145,7 +212,7 @@ dotnet restore
 dotnet run
 ```
 
-Backend will start on:
+Backend runs on:
 
 ```
 https://localhost:5001
@@ -161,7 +228,7 @@ npm install
 ng serve
 ```
 
-Frontend will run on:
+Frontend runs on:
 
 ```
 http://localhost:4200
@@ -171,9 +238,9 @@ http://localhost:4200
 
 # 🗄 Database Setup
 
-1. Open **SQL Server Management Studio**
+1. Open SQL Server Management Studio
 2. Create a new database
-3. Import the schema from:
+3. Import schema from:
 
 ```
 Database/Database_Schema_NestInn.sql
@@ -196,7 +263,7 @@ Login
 JWT Token Generated
         │
         ▼
-Access Protected API Routes
+Access Protected Routes
 ```
 
 ---
@@ -214,11 +281,12 @@ Access Protected API Routes
 
 # 🔮 Future Improvements
 
-* Stripe / Razorpay payment integration
-* Image upload for properties
+* Secure chatbot integration via backend
+* Stripe / Razorpay integration
+* Image optimization & compression
 * Admin moderation dashboard
 * Docker deployment
-* CI/CD pipeline with GitHub Actions
+* CI/CD pipeline (GitHub Actions)
 
 ---
 
@@ -226,7 +294,7 @@ Access Protected API Routes
 
 **Prithwish Bhowmik**
 
-GitHub
+GitHub:
 https://github.com/codePR-26
 
 ---
